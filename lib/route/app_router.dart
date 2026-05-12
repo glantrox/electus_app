@@ -9,22 +9,40 @@ final authService = AuthService();
 class AppRouter {
   static final router = GoRouter(
     refreshListenable: authService,
-    initialLocation: '/',
+    initialLocation: '/splashScreen',
     redirect: (context, state) {
-      final bool loggingIn = state.matchedLocation == '/login';
-      if (!authService.isAuthenticated) return '/login';
-      if (loggingIn) return '/';
+      final bool isInitialized = authService.isInitialized;
+      final bool isAuthenticated = authService.isAuthenticated;
+
+      final bool isSplashPath = state.matchedLocation == '/splashScreen';
+      final bool isLoginPath = state.matchedLocation == '/login';
+
+      // 1. App is still loading (Show Splash)
+      if (!isInitialized) {
+        return isSplashPath ? null : '/splashScreen';
+      }
+
+      // 2. App is initialized, but user is NOT logged in
+      if (!isAuthenticated) {
+        if (isLoginPath) return null; // Already there, stay.
+        return '/login';
+      }
+
+      // 3. User IS logged in
+      // If they are on Splash or Login, move them to Home
+      if (isLoginPath || isSplashPath) {
+        return '/';
+      }
+
+      // No redirect needed for other pages
       return null;
     },
     routes: [
-      // Semua route aplikasi akan didefinisikan di sini
-      // Home Page
       GoRoute(path: '/', builder: (context, state) => const HomePage()),
       GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
-      // Splash Screen
       GoRoute(
         path: '/splashScreen',
-        builder: (context, state) => SplashScreen(),
+        builder: (context, state) => const SplashScreen(),
       ),
     ],
   );
