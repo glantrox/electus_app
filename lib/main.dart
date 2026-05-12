@@ -1,4 +1,4 @@
-import 'package:electus_app/app_router.dart';
+import 'package:electus_app/route/app_router.dart';
 import 'package:flutter/material.dart';
 
 void main() {
