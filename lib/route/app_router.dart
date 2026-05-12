@@ -25,7 +25,7 @@ class AppRouter {
       if (!isInitialized) return isSplashPath ? null : '/splashScreen';
 
       if (!isAuthenticated) {
-        if (isLoginPath) return null; // Already there stay.
+        if (isLoginPath) return null;
         return '/login';
       }
 
