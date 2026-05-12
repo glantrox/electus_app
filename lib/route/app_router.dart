@@ -21,7 +21,9 @@ class AppRouter {
 
       final bool isSplashPath = state.matchedLocation == '/splashScreen';
       final bool isLoginPath = state.matchedLocation == '/login';
+
       if (_stage == AppStage.developmentUI) return '/uiProd';
+
       if (!isInitialized) return isSplashPath ? null : '/splashScreen';
 
       if (!isAuthenticated) {
