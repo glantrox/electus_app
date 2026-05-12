@@ -6,5 +6,5 @@ untuk state management di aplikasi ini kita menggunakan bloc, bloc ini menggunak
 ![alt text](image.png)
 
 # Routing
-GoRouter sebagai router aplikasi ini, kalian bisa pelajari gimana cara pakai GoRouter di sini https://pub.dev/packages/go_router, semua route yang essential akan di simpan di dalam main.dart.
+GoRouter sebagai router aplikasi ini, kalian bisa pelajari gimana cara pakai GoRouter di sini https://pub.dev/packages/go_router, semua route yang essential akan di simpan di dalam app_router.dart.
 
