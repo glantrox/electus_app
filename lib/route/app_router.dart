@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 final authService = AuthService();
 
 class AppRouter {
-  AppStage _stage;
+  final AppStage _stage;
   AppRouter(AppStage stage) : _stage = stage;
 
   GoRouter get router => GoRouter(
