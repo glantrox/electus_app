@@ -1,4 +1,5 @@
 import 'package:electus_app/domain/entities/stage.dart';
+import 'package:electus_app/presentation/widget/style/colors.dart';
 import 'package:electus_app/route/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -24,7 +25,9 @@ class MainApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Electus App',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       routerConfig: appRouter,
     );
   }

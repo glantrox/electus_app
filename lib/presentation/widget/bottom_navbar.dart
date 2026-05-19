@@ -37,8 +37,8 @@ class AppBottomNavbar extends StatelessWidget {
       onTap: onItemTapped,
       type: BottomNavigationBarType
           .fixed, // Prevents shifting behavior if items > 3
-      selectedItemColor: AppColors.onPrimaryContainer,
-      unselectedItemColor: AppColors.onSurfaceVariant,
+      selectedItemColor: context.colorScheme.onPrimaryContainer,
+      unselectedItemColor: context.colorScheme.onSurfaceVariant,
       items: _listOfNavbarItem,
     );
   }
