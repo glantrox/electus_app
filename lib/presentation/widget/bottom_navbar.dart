@@ -1,3 +1,4 @@
+import 'package:electus_app/presentation/widget/style/colors.dart';
 import 'package:flutter/material.dart';
 
 class AppBottomNavbar extends StatefulWidget {
@@ -8,28 +9,25 @@ class AppBottomNavbar extends StatefulWidget {
 }
 
 class _AppBottomNavbarState extends State<AppBottomNavbar> {
+  List<BottomNavigationBarItem> listOfNavbarItem = [
+    BottomNavigationBarItem(icon: Icon(Icons.dashboard_rounded), label: 'Home'),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.bar_chart_rounded),
+      label: 'Statistics',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.camera_alt_rounded),
+      label: 'Scan',
+    ),
+    BottomNavigationBarItem(icon: Icon(Icons.folder), label: 'Upload'),
+    BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: 'Account'),
+  ];
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      items: [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.dashboard_rounded),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.bar_chart_rounded),
-          label: 'Statistics',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.camera_alt_rounded),
-          label: 'Scan',
-        ),
-        BottomNavigationBarItem(icon: Icon(Icons.folder), label: 'Upload'),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person_rounded),
-          label: 'Account',
-        ),
-      ],
+      selectedItemColor: AppColors.onPrimaryContainer,
+      unselectedItemColor: AppColors.onSurfaceVariant,
+      items: listOfNavbarItem,
     );
   }
 }

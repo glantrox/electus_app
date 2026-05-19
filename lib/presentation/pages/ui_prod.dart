@@ -1,3 +1,4 @@
+import 'package:electus_app/presentation/pages/main_page.dart';
 import 'package:flutter/material.dart';
 
 class UiProdPage extends StatefulWidget {
@@ -15,6 +16,6 @@ class _UiProdPageState extends State<UiProdPage> {
   //    GoRouter('/{routeName}') ikutin aja formatnya kayak route yang lain, dan sesuaikan.
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return MainPage();
   }
 }

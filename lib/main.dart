@@ -17,7 +17,7 @@ class MainApp extends StatelessWidget {
   // 'AppStage.developmentUI'
   // Development UI: Kalo kalian lagi develop dan testing UI, dalam konteks ini middleware redirect tidak akan terlibat
   // Development Regular: Jika kalian lagi develop aplikasi biasa dengan intervensi middleware
-  static AppStage appStage = AppStage.developmentRegular;
+  static AppStage appStage = AppStage.developmentUI;
   final GoRouter appRouter = AppRouter(appStage).router;
   @override
   Widget build(BuildContext context) {
