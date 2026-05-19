@@ -1,3 +1,4 @@
+import 'package:electus_app/presentation/pages/candidate_page.dart';
 import 'package:electus_app/presentation/pages/main_page.dart';
 import 'package:flutter/material.dart';
 

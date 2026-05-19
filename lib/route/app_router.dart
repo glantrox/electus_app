@@ -1,5 +1,6 @@
 import 'package:electus_app/domain/entities/stage.dart';
 import 'package:electus_app/presentation/pages/auth/login_page.dart';
+import 'package:electus_app/presentation/pages/candidate_page.dart';
 import 'package:electus_app/presentation/pages/main_page.dart';
 import 'package:electus_app/presentation/pages/splash_screen.dart';
 import 'package:electus_app/presentation/pages/ui_prod.dart';
@@ -40,6 +41,10 @@ class AppRouter {
       // List semua routernya
       GoRoute(path: '/uiProd', builder: (context, state) => const UiProdPage()),
       GoRoute(path: '/', builder: (context, state) => const MainPage()),
+      GoRoute(
+        path: '/candidates',
+        builder: (context, state) => const CandidatePage(),
+      ),
       GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
       GoRoute(
         path: '/splashScreen',

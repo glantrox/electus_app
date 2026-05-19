@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:electus_app/presentation/widget/style/colors.dart';
 import 'package:electus_app/presentation/widget/metric_card.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeSection extends StatelessWidget {
   const HomeSection({super.key});
@@ -14,7 +15,7 @@ class HomeSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               _HeaderSection(
                 name: 'Alex',
                 statusMessage:
@@ -24,12 +25,15 @@ class HomeSection extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: MetricCard(
-                      icon: Icons.work_outline_rounded,
-                      value: '14',
-                      label: 'OPEN ROLES',
-                      badgeText: 'ACTIVE',
-                      badgeType: MetricBadgeType.success,
+                    child: InkWell(
+                      onTap: () => context.go('/candidates'),
+                      child: MetricCard(
+                        icon: Icons.work_outline_rounded,
+                        value: '14',
+                        label: 'OPEN ROLES',
+                        badgeText: 'ACTIVE',
+                        badgeType: MetricBadgeType.success,
+                      ),
                     ),
                   ),
                   SizedBox(width: 16),
