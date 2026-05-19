@@ -26,6 +26,7 @@ class HomeSection extends StatelessWidget {
                 children: [
                   Expanded(
                     child: InkWell(
+                      // kalo dev mode nya produi gabakal bisa pindah, karena root widgetnya bukan material.router
                       onTap: () => context.go('/candidates'),
                       child: MetricCard(
                         icon: Icons.work_outline_rounded,
