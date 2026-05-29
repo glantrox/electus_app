@@ -1,6 +1,6 @@
 import 'package:electus_app/router.dart';
-import 'package:electus_app/presentation/auth/bloc/auth_bloc.dart';
-import 'package:electus_app/presentation/auth/bloc/auth_event.dart';
+import 'package:electus_app/presentation/auth/bloc/auth/auth_bloc.dart';
+import 'package:electus_app/presentation/auth/bloc/auth/auth_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 
@@ -21,9 +21,12 @@ class MainApp extends StatelessWidget {
     final authBloc = context.read<AuthBloc>();
     final appRouter = AppRouter(authBloc);
 
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      routerConfig: appRouter.config,
+    return MultiBlocProvider(
+      providers: [BlocProvider<AuthBloc>(create: (context) => AuthBloc())],
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        routerConfig: appRouter.config,
+      ),
     );
   }
 }
