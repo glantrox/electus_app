@@ -23,10 +23,7 @@ class MainApp extends StatelessWidget {
     final appRouter = AppRouter(authBloc);
 
     return MultiBlocProvider(
-      providers: [
-        BlocProvider<AuthBloc>(create: (context) => AuthBloc()),
-        BlocProvider<LoginBloc>(create: (context) => LoginBloc()),
-      ],
+      providers: [BlocProvider<LoginBloc>(create: (context) => LoginBloc())],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         routerConfig: appRouter.config,

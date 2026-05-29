@@ -75,8 +75,12 @@ class AppRouter {
       // --- Authenticated Shell (Bottom Navigation) ---
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
-          // This returns your main Scaffold with the BottomNavigationBar
-          return MainDashboardLayout(navigationShell: navigationShell);
+          // Add a UniqueKey to force rebuilds during hot reload
+          return MainDashboardLayout(
+            key:
+                UniqueKey(), // Remove in production if state resets are unwanted
+            navigationShell: navigationShell,
+          );
         },
         branches: [
           // Branch 1: Home
@@ -85,7 +89,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: '/home/dashboard',
-                builder: (context, state) => const DashboardScreen(),
+                builder: (context, state) => DashboardScreen(), // No 'const'
               ),
             ],
           ),
@@ -96,7 +100,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: '/upload_cv',
-                builder: (context, state) => const UploadCvScreen(),
+                builder: (context, state) => UploadCvScreen(),
               ),
             ],
           ),
@@ -107,7 +111,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: '/scan_cv',
-                builder: (context, state) => const ScanCvScreen(),
+                builder: (context, state) => ScanCvScreen(),
               ),
             ],
           ),
@@ -118,7 +122,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: '/home/statistics',
-                builder: (context, state) => const StatisticsScreen(),
+                builder: (context, state) => StatisticsScreen(),
               ),
             ],
           ),
@@ -129,7 +133,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: '/home/account_settings',
-                builder: (context, state) => const AccountSettingsScreen(),
+                builder: (context, state) => AccountSettingsScreen(),
               ),
             ],
           ),

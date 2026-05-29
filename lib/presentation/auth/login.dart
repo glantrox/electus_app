@@ -38,9 +38,6 @@ class _LoginScreenState extends State<LoginScreen> {
           password: _passwordController.text,
         ),
       );
-      if (context.read<LoginBloc>().state is SuccessLS) {
-        context.read<AuthBloc>().add(AuthLoginRequested());
-      }
     }
   }
 
@@ -49,10 +46,24 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: AppColor.background,
       body: SafeArea(
-        child: BlocListener<AuthBloc, AuthState>(
-          listener: (context, state) {
-            if (state.status == AuthStatus.authenticated) context.go('/home');
-          },
+        // Add MultiBlocListener to handle both flows
+        child: MultiBlocListener(
+          listeners: [
+            BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state.status == AuthStatus.authenticated) {
+                  context.go('/home/dashboard');
+                }
+              },
+            ),
+            BlocListener<LoginBloc, LoginState>(
+              listener: (context, state) {
+                if (state is SuccessLS) {
+                  context.read<AuthBloc>().add(AuthLoginRequested());
+                }
+              },
+            ),
+          ],
           child: Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(
@@ -73,7 +84,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       () => _isPasswordObscured = !_isPasswordObscured,
                     ),
                     onSubmit: _handleLogin,
-                    isLoading: context.read<LoginBloc>().state is LoadingLS,
+                    // Use context.watch to trigger rebuilds
+                    isLoading: context.watch<LoginBloc>().state is LoadingLS,
                   ),
                   const SizedBox(height: 32),
                   const _LoginFooter(),

@@ -6,7 +6,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(const LoginState()) {
     on<OnFetchLogin>((event, emit) async {
       emit(LoadingLS());
-      Future.delayed(const Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 2));
       emit(SuccessLS());
     });
   }
