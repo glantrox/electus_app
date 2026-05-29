@@ -10,6 +10,7 @@ environment:
 dependencies:
   # External Dependencies
   bloc: ^9.2.1
+  dart_either: ^2.1.0
   equatable: ^2.0.8
   flutter:
     sdk: flutter
