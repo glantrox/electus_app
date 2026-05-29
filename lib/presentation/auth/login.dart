@@ -1,6 +1,10 @@
 import 'package:electus_app/core/theme/colors.dart';
 import 'package:electus_app/presentation/auth/bloc/auth/auth_bloc.dart';
 import 'package:electus_app/presentation/auth/bloc/auth/auth_event.dart';
+import 'package:electus_app/presentation/auth/bloc/auth/auth_state.dart';
+import 'package:electus_app/presentation/auth/bloc/login/login_bloc.dart';
+import 'package:electus_app/presentation/auth/bloc/login/login_event.dart';
+import 'package:electus_app/presentation/auth/bloc/login/login_state.dart';
 import 'package:electus_app/presentation/components/auth_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -28,7 +32,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handleLogin() async {
     if (_formKey.currentState?.validate() ?? false) {
-      context.read<AuthBloc>().add(AuthLoginRequested());
+      context.read<LoginBloc>().add(
+        OnFetchLogin(
+          email: _emailController.text,
+          password: _passwordController.text,
+        ),
+      );
+      if (context.read<LoginBloc>().state is SuccessLS) {
+        context.read<AuthBloc>().add(AuthLoginRequested());
+      }
     }
   }
 
@@ -37,30 +49,36 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: AppColor.background,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24.0,
-              vertical: 32.0,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const _LoginHeader(),
-                const SizedBox(height: 32),
-                _LoginFormCard(
-                  formKey: _formKey,
-                  emailController: _emailController,
-                  passwordController: _passwordController,
-                  isPasswordObscured: _isPasswordObscured,
-                  onTogglePassword: () => setState(
-                    () => _isPasswordObscured = !_isPasswordObscured,
+        child: BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state.status == AuthStatus.authenticated) context.go('/home');
+          },
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 32.0,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const _LoginHeader(),
+                  const SizedBox(height: 32),
+                  _LoginFormCard(
+                    formKey: _formKey,
+                    emailController: _emailController,
+                    passwordController: _passwordController,
+                    isPasswordObscured: _isPasswordObscured,
+                    onTogglePassword: () => setState(
+                      () => _isPasswordObscured = !_isPasswordObscured,
+                    ),
+                    onSubmit: _handleLogin,
+                    isLoading: context.read<LoginBloc>().state is LoadingLS,
                   ),
-                  onSubmit: _handleLogin,
-                ),
-                const SizedBox(height: 32),
-                const _LoginFooter(),
-              ],
+                  const SizedBox(height: 32),
+                  const _LoginFooter(),
+                ],
+              ),
             ),
           ),
         ),
@@ -103,6 +121,7 @@ class _LoginFormCard extends StatelessWidget {
   final bool isPasswordObscured;
   final VoidCallback onTogglePassword;
   final VoidCallback onSubmit;
+  final bool isLoading;
 
   const _LoginFormCard({
     required this.formKey,
@@ -111,6 +130,7 @@ class _LoginFormCard extends StatelessWidget {
     required this.isPasswordObscured,
     required this.onTogglePassword,
     required this.onSubmit,
+    required this.isLoading,
   });
 
   @override
@@ -183,7 +203,7 @@ class _LoginFormCard extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             ElevatedButton(
-              onPressed: onSubmit,
+              onPressed: !isLoading ? onSubmit : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColor.primary,
                 foregroundColor: AppColor.textInverse,
@@ -193,16 +213,21 @@ class _LoginFormCard extends StatelessWidget {
                 ),
                 elevation: 0,
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Log In',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                  SizedBox(width: 8),
-                  Icon(Icons.arrow_forward, size: 20),
-                ],
+                children: !isLoading
+                    ? [
+                        Text(
+                          'Log In',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Icon(Icons.arrow_forward, size: 20),
+                      ]
+                    : [CircularProgressIndicator()],
               ),
             ),
           ],

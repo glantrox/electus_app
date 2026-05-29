@@ -5,7 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(const LoginState()) {
     on<OnFetchLogin>((event, emit) async {
-      // TODO : Implement Logic from Domain/Usecase
+      emit(LoadingLS());
+      Future.delayed(const Duration(seconds: 2));
+      emit(SuccessLS());
     });
   }
 }

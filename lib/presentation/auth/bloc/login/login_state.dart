@@ -12,6 +12,8 @@ class InitLS extends LoginState {}
 
 class LoadingLS extends LoginState {}
 
+class SuccessLS extends LoginState {}
+
 class ErrorLS extends LoginState {
   final String message;
   const ErrorLS({required this.message});
