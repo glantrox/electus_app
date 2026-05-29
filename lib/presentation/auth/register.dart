@@ -25,7 +25,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void _handleRegister() {
+  Future<void> _handleRegister() async {
     if (_formKey.currentState?.validate() ?? false) {
       // Trigger BLoC event here
       // context.read<AuthBloc>().add(AuthRegisterEvent(...));
@@ -107,10 +107,6 @@ class _RegisterFormCard extends StatelessWidget {
     required this.passwordController,
     required this.onSubmit,
   });
-
-  Future<void> _handleRegister() async {
-    // TODO : Handle Register with Validation
-  }
 
   @override
   Widget build(BuildContext context) {

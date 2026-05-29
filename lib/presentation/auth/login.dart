@@ -26,9 +26,8 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _handleLogin() {
+  Future<void> _handleLogin() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Prevent double submission by checking bloc state if necessary
       context.read<AuthBloc>().add(AuthLoginRequested());
     }
   }
@@ -113,10 +112,6 @@ class _LoginFormCard extends StatelessWidget {
     required this.onTogglePassword,
     required this.onSubmit,
   });
-
-  Future<void> _handleLogin() async {
-    // TODO : Handle Login with Validation
-  }
 
   @override
   Widget build(BuildContext context) {

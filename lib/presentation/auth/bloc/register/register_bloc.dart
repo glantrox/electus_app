@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   RegisterBloc() : super(const RegisterState()) {
-    on<OnFetchRegister>((event, emit) async {});
+    on<OnFetchRegister>((event, emit) async {
+      // TODO : Implement Logic from Domain/Usecase
+    });
   }
 }
