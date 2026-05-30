@@ -22,7 +22,7 @@ class MainDashboardLayout extends StatelessWidget {
       extendBody: true, // Allow body content to flow under the floating nav
       bottomNavigationBar: SafeArea(
         child: Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 9),
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           decoration: BoxDecoration(
             color: AppColor.bottomNavSurface,
