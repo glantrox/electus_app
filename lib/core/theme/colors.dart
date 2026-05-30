@@ -37,4 +37,9 @@ class AppColor {
 
   // Borders & Dividers
   static const Color borderLight = Color(0xFFE5E7EB);
+
+  // Others
+  static const Color errorBackground = Color(0xFFFEF2F2);
+  static const Color errorText = Color(0xFFDC2626);
+  static const Color errorIcon = Color(0xFFB91C1C);
 }

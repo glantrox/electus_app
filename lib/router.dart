@@ -73,6 +73,7 @@ class AppRouter {
       ),
 
       // --- Authenticated Shell (Bottom Navigation) ---
+      GoRoute(path: '/scan_cv', builder: (context, state) => ScanCvScreen()),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           // Add a UniqueKey to force rebuilds during hot reload
@@ -101,17 +102,6 @@ class AppRouter {
               GoRoute(
                 path: '/upload_cv',
                 builder: (context, state) => UploadCvScreen(),
-              ),
-            ],
-          ),
-
-          // Branch 3: Scan
-          StatefulShellBranch(
-            navigatorKey: _scanNavKey,
-            routes: [
-              GoRoute(
-                path: '/scan_cv',
-                builder: (context, state) => ScanCvScreen(),
               ),
             ],
           ),
