@@ -6,6 +6,7 @@ import 'package:electus_app/presentation/features/upload_cv.dart';
 import 'package:electus_app/presentation/main_dashboard.dart';
 import 'package:electus_app/presentation/pages/account_settings.dart';
 import 'package:electus_app/presentation/pages/dashboard.dart';
+import 'package:electus_app/presentation/pages/notification.dart';
 import 'package:electus_app/presentation/pages/statistics.dart';
 import 'package:electus_app/core/router/router_refresh_stream.dart';
 import 'package:electus_app/presentation/auth/bloc/auth/auth_bloc.dart';
@@ -73,6 +74,10 @@ class AppRouter {
       ),
 
       // --- Authenticated Shell (Bottom Navigation) ---
+      GoRoute(
+        path: '/notification',
+        builder: (context, state) => NotificationScreen(),
+      ),
       GoRoute(path: '/scan_cv', builder: (context, state) => ScanCvScreen()),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {

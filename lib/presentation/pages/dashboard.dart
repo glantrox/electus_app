@@ -1,5 +1,6 @@
 import 'package:electus_app/core/theme/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -215,17 +216,21 @@ class _DashboardPersistentHeaderDelegate
                           Opacity(
                             opacity: expandedPercent,
                             child: Container(
-                              padding: const EdgeInsets.all(8),
+                              padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.15),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Stack(
+                              child: Stack(
                                 children: [
-                                  Icon(
-                                    Icons.notifications_none,
-                                    color: Colors.white,
-                                    size: 20,
+                                  IconButton(
+                                    onPressed: () =>
+                                        context.push('/notification'),
+                                    icon: Icon(
+                                      Icons.notifications_none,
+                                      color: Colors.white,
+                                      size: 22,
+                                    ),
                                   ),
                                   Positioned(
                                     top: 2,

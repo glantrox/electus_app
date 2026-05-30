@@ -1,5 +1,6 @@
 import 'package:electus_app/core/theme/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({super.key});
@@ -53,7 +54,7 @@ class _DashboardHeader extends StatelessWidget {
         ),
         const Spacer(),
         IconButton(
-          onPressed: () {},
+          onPressed: () => context.push('/notification'),
           icon: const Icon(Icons.notifications_none_outlined),
           color: AppColor.primary,
         ),

@@ -42,4 +42,13 @@ class AppColor {
   static const Color errorBackground = Color(0xFFFEF2F2);
   static const Color errorText = Color(0xFFDC2626);
   static const Color errorIcon = Color(0xFFB91C1C);
+
+  static const Color notifPurple = Color(0xFF8B5CF6);
+  static const Color notifPurpleBg = Color(0xFFF5F3FF);
+  static const Color notifGreen = Color(0xFF10B981);
+  static const Color notifGreenBg = Color(0xFFECFDF5);
+  static const Color notifBlue = Color(0xFF3B82F6);
+  static const Color notifBlueBg = Color(0xFFEFF6FF);
+  static const Color notifOrange = Color(0xFFF59E0B);
+  static const Color notifOrangeBg = Color(0xFFFFFBEB);
 }
