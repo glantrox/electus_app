@@ -26,11 +26,11 @@ lib/
 └── main.dart       # Entri point utama aplikasi
 ```
 
-## Alur Logika Penting
+## Alur Logika
 - **Otentikasi & Redirect Routing:** Status otentikasi dikendalikan oleh `AuthBloc`. Parameter `refreshListenable` pada GoRouter mendengarkan perubahan stream `AuthBloc`. Jika status pengguna tertandai "unauthenticated" dan mencoba masuk ke rute privat (contoh: Home), pengguna otomatis tertendang ke `/login`. Demikian juga pengguna yang sudah Auth tidak bisa mengakses layar Splash/Login.
 - **Nested Navigation (BottomNav):** Memakai `StatefulShellRoute` dari GoRouter. Memungkinkan setiap cabang rute mempertahankan _state_ navigasinya masing-masing ketika pengguna berpindah menu dari Bottom Navigation Bar.
 
-## Persiapan Standar Developer
+## Installation
 1. Jalankan perintah instalasi dependensi (package):
    ```bash
    flutter pub get
