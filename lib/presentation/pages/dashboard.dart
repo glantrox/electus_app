@@ -328,10 +328,16 @@ class _DashboardPersistentHeaderDelegate
                         color: Colors.white.withOpacity(0.15),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Stack(
+                      child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          Icon(Icons.notifications_none, color: Colors.white),
+                          IconButton(
+                            onPressed: () => context.push('/notification'),
+                            icon: Icon(
+                              Icons.notifications_none,
+                              color: Colors.white,
+                            ),
+                          ),
                           Positioned(
                             top: 12,
                             right: 12,

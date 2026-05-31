@@ -14,14 +14,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   }
 
   @override
-  Future<void> checkToken() {
-    // TODO: implement checkToken
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> getToken() {
-    // TODO: implement getToken
+  Future<void> validateToken(String token) {
+    // TODO: implement validateToken
     throw UnimplementedError();
   }
 }
