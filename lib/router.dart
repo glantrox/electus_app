@@ -18,7 +18,6 @@ import 'package:go_router/go_router.dart';
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _homeNavKey = GlobalKey<NavigatorState>(debugLabel: 'home');
 final _uploadNavKey = GlobalKey<NavigatorState>(debugLabel: 'upload');
-final _scanNavKey = GlobalKey<NavigatorState>(debugLabel: 'scan');
 final _statsNavKey = GlobalKey<NavigatorState>(debugLabel: 'stats');
 final _accountNavKey = GlobalKey<NavigatorState>(debugLabel: 'account');
 
@@ -53,11 +52,13 @@ class AppRouter {
       // final loggedIn = status == AuthStatus.authenticated;
 
       // 1. Unauthenticated users trying to access protected routes
+      // ignore: dead_code
       if (!loggedIn && !isGoingToAuthOrSplash) {
         return '/login';
       }
 
       // 2. Unauthenticated user on splash screen should go to login
+      // ignore: dead_code
       if (!loggedIn && state.matchedLocation == '/splash') {
         return '/login';
       }

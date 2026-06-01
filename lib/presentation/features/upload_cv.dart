@@ -70,10 +70,10 @@ class _DropzoneCard extends StatelessWidget {
         color: AppColor
             .surface, // The image shows a very soft gradient/shadow, surface works best for performance
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColor.borderLight.withOpacity(0.5)),
+        border: Border.all(color: AppColor.borderLight.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
-            color: AppColor.primary.withOpacity(0.05),
+            color: AppColor.primary.withValues(alpha: 0.05),
             blurRadius: 40,
             spreadRadius: 0,
             offset: const Offset(0, 10),
@@ -224,7 +224,7 @@ class _FileStatusTile extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isError
-            ? AppColor.errorBackground.withOpacity(0.5)
+            ? AppColor.errorBackground.withValues(alpha: 0.5)
             : AppColor.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(

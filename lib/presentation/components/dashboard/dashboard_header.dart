@@ -82,7 +82,7 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                             child: Container(
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.15),
+                                color: Colors.white.withValues(alpha: 0.15),
                                 shape: BoxShape.circle,
                               ),
                               child: Stack(
@@ -189,7 +189,7 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                       height: 48,
                       width: 48,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
+                        color: Colors.white.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Stack(

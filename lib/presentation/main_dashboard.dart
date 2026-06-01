@@ -5,8 +5,7 @@ import 'package:go_router/go_router.dart';
 class MainDashboardLayout extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
-  const MainDashboardLayout({Key? key, required this.navigationShell})
-    : super(key: key);
+  const MainDashboardLayout({super.key, required this.navigationShell});
 
   void _onTap(int index) {
     navigationShell.goBranch(
@@ -29,7 +28,7 @@ class MainDashboardLayout extends StatelessWidget {
             borderRadius: BorderRadius.circular(40),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),

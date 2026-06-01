@@ -385,7 +385,7 @@ class _PipelineRow extends StatelessWidget {
           child: Container(
             height: 12,
             width: double.infinity,
-            color: AppColor.borderLight.withOpacity(0.5), // Track color
+            color: AppColor.borderLight.withValues(alpha: 0.5), // Track color
             child: FractionallySizedBox(
               alignment: Alignment.centerLeft,
               widthFactor: percentage,

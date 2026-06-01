@@ -41,7 +41,7 @@ class AuthTextField extends StatelessWidget {
                 color: AppColor.textPrimary,
               ),
             ),
-            if (labelSuffix != null) labelSuffix!,
+            ?labelSuffix,
           ],
         ),
         const SizedBox(height: 8),

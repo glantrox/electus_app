@@ -73,7 +73,7 @@ class _ScanCvScreenState extends State<ScanCvScreen> {
       return;
     }
     try {
-      final XFile picture = await _cameraController!.takePicture();
+      await _cameraController!.takePicture();
       // Route to crop/preview screen and pass the XFile path
       // context.push('/scan_preview', extra: picture.path);
     } catch (e) {
@@ -236,8 +236,8 @@ class _BottomGradient extends StatelessWidget {
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
           colors: [
-            Colors.black.withOpacity(0.85),
-            Colors.black.withOpacity(0.4),
+            Colors.black.withValues(alpha: 0.85),
+            Colors.black.withValues(alpha: 0.4),
             Colors.transparent,
           ],
         ),
@@ -259,9 +259,9 @@ class _GlassButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.15),
+          color: Colors.white.withValues(alpha: 0.15),
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1),
         ),
         child: Icon(icon, color: Colors.white, size: 24),
       ),

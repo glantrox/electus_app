@@ -99,9 +99,9 @@ class _ProfileDetailsSectionState extends State<ProfileDetailsSection> {
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 decoration: BoxDecoration(
                   color: isActive
-                      ? const Color(0xFF2D7D6F).withOpacity(0.08)
+                      ? const Color(0xFF2D7D6F).withValues(alpha: 0.08)
                       : isHovered
-                          ? const Color(0xFF2D7D6F).withOpacity(0.04)
+                          ? const Color(0xFF2D7D6F).withValues(alpha: 0.04)
                           : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                 ),
