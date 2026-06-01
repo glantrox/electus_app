@@ -1,5 +1,11 @@
+import '../../models/auth_response_model.dart';
+
 abstract class AuthRemoteDatasource {
-  Future<void> loginUser(String email, String password);
-  Future<void> registerUser(String fullName, String email, String password);
-  Future<void> validateToken(String token);
+  Future<AuthResponseModel> loginUser(String email, String password);
+  Future<AuthResponseModel> registerUser(
+    String fullName,
+    String email,
+    String password,
+  );
+  Future<bool> validateToken(String token);
 }
