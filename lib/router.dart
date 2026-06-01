@@ -137,7 +137,7 @@ class AppRouter {
               GoRoute(
                 path: '/home/account_settings',
                 builder: (context, state) => AccountSettingsScreen(
-                  ThemeChanged: onThemeChanged,
+                  themeChanged: onThemeChanged,
                   currentTheme: themeMode,
                 ),
               ),
