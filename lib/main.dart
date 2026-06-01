@@ -15,13 +15,30 @@ void main() {
   );
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  ThemeMode _themeMode = ThemeMode.light;
+
+  void toggleTheme(ThemeMode mode) {
+    setState(() {
+      _themeMode = mode;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final authBloc = context.read<AuthBloc>();
-    final appRouter = AppRouter(authBloc);
+    final appRouter = AppRouter(
+      authBloc,
+      onThemeChanged: toggleTheme,
+      themeMode: _themeMode,
+    );
 
     return MultiBlocProvider(
       providers: [BlocProvider<LoginBloc>(create: (context) => LoginBloc())],

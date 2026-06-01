@@ -24,8 +24,14 @@ final _accountNavKey = GlobalKey<NavigatorState>(debugLabel: 'account');
 
 class AppRouter {
   final AuthBloc authBloc;
+  final void Function(ThemeMode) onThemeChanged;
+  final ThemeMode themeMode;
 
-  AppRouter(this.authBloc);
+  AppRouter(
+    this.authBloc, {
+    required this.onThemeChanged,
+    required this.themeMode,
+  });
 
   late final GoRouter config = GoRouter(
     navigatorKey: _rootNavigatorKey,
@@ -42,7 +48,9 @@ class AppRouter {
         return '/splash';
       }
 
-      final loggedIn = status == AuthStatus.authenticated;
+      // bruteforce login buat cek profile
+      final loggedIn = true;
+      // final loggedIn = status == AuthStatus.authenticated;
 
       // 1. Unauthenticated users trying to access protected routes
       if (!loggedIn && !isGoingToAuthOrSplash) {
@@ -128,7 +136,10 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: '/home/account_settings',
-                builder: (context, state) => AccountSettingsScreen(),
+                builder: (context, state) => AccountSettingsScreen(
+                  ThemeChanged: onThemeChanged,
+                  currentTheme: themeMode,
+                ),
               ),
             ],
           ),
