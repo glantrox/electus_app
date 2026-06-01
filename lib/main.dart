@@ -3,13 +3,17 @@ import 'package:electus_app/presentation/auth/bloc/login/login_bloc.dart';
 import 'package:electus_app/router.dart';
 import 'package:electus_app/presentation/auth/bloc/auth/auth_bloc.dart';
 import 'package:electus_app/presentation/auth/bloc/auth/auth_event.dart';
+import 'package:electus_app/presentation/auth/bloc/register/register_bloc.dart';
+import 'package:electus_app/injection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dependencyInjection();
   runApp(
     BlocProvider(
-      create: (_) => AuthBloc()..add(AuthCheckRequested()),
+      create: (_) => di<AuthBloc>()..add(AuthCheckRequested()),
       child: MainApp(),
     ),
   );
@@ -41,7 +45,10 @@ class _MainAppState extends State<MainApp> {
     );
 
     return MultiBlocProvider(
-      providers: [BlocProvider<LoginBloc>(create: (context) => LoginBloc())],
+      providers: [
+        BlocProvider<LoginBloc>(create: (context) => di<LoginBloc>()),
+        BlocProvider<RegisterBloc>(create: (context) => di<RegisterBloc>()),
+      ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         routerConfig: appRouter.config,

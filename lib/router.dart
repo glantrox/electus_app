@@ -47,18 +47,14 @@ class AppRouter {
         return '/splash';
       }
 
-      // bruteforce login buat cek profile
-      final loggedIn = true;
-      // final loggedIn = status == AuthStatus.authenticated;
+      final loggedIn = status == AuthStatus.authenticated;
 
       // 1. Unauthenticated users trying to access protected routes
-      // ignore: dead_code
       if (!loggedIn && !isGoingToAuthOrSplash) {
         return '/login';
       }
 
       // 2. Unauthenticated user on splash screen should go to login
-      // ignore: dead_code
       if (!loggedIn && state.matchedLocation == '/splash') {
         return '/login';
       }

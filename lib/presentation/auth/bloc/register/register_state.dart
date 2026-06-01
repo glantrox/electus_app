@@ -12,6 +12,8 @@ class InitRS extends RegisterState {}
 
 class LoadingRS extends RegisterState {}
 
+class SuccessRS extends RegisterState {}
+
 class ErrorRS extends RegisterState {
   final String message;
   const ErrorRS({required this.message});

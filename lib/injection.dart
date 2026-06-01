@@ -1,9 +1,12 @@
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Datasources
 import 'package:electus_app/data/datasource/auth/auth_remote_datasource.dart';
 import 'package:electus_app/data/datasource/auth/auth_remote_datasource_impl.dart';
+import 'package:electus_app/data/datasource/auth/auth_local_datasource.dart';
+import 'package:electus_app/data/datasource/auth/auth_local_datasource_impl.dart';
 import 'package:electus_app/data/datasource/candidate/candidate_data_source.dart';
 import 'package:electus_app/data/datasource/candidate/candidate_data_source_impl.dart';
 
@@ -17,6 +20,13 @@ import 'package:electus_app/data/repositories/candidate_repository_impl.dart';
 import 'package:electus_app/domain/usecases/auth/login_user_usecase.dart';
 import 'package:electus_app/domain/usecases/auth/register_user_usecase.dart';
 import 'package:electus_app/domain/usecases/auth/validate_token_usecase.dart';
+import 'package:electus_app/domain/usecases/auth/get_cached_token_usecase.dart';
+import 'package:electus_app/domain/usecases/auth/logout_user_usecase.dart';
+
+// BLoCs
+import 'package:electus_app/presentation/auth/bloc/auth/auth_bloc.dart';
+import 'package:electus_app/presentation/auth/bloc/login/login_bloc.dart';
+import 'package:electus_app/presentation/auth/bloc/register/register_bloc.dart';
 
 // Candidate Usecases
 import 'package:electus_app/domain/usecases/candidates/get_candidates_usecase.dart';
@@ -37,9 +47,13 @@ final di = GetIt.instance;
 
 Future<void> dependencyInjection() async {
   // External
+  final sharedPreferences = await SharedPreferences.getInstance();
+  di.registerLazySingleton(() => sharedPreferences);
   di.registerLazySingleton(() => http.Client());
 
   // Data sources
+  di.registerLazySingleton<AuthLocalDatasource>(
+      () => AuthLocalDatasourceImpl(sharedPreferences: di()));
   di.registerLazySingleton<AuthRemoteDatasource>(
       () => AuthRemoteDatasourceImpl(client: di()));
   di.registerLazySingleton<CandidateDataSource>(
@@ -47,7 +61,7 @@ Future<void> dependencyInjection() async {
 
   // Repositories
   di.registerLazySingleton<AuthRepository>(
-      () => AuthRepositoryImpl(remoteDatasource: di()));
+      () => AuthRepositoryImpl(remoteDatasource: di(), localDatasource: di()));
   di.registerLazySingleton<CandidateRepository>(
       () => CandidateRepositoryImpl(remoteDatasource: di()));
 
@@ -55,6 +69,8 @@ Future<void> dependencyInjection() async {
   di.registerLazySingleton(() => LoginUserUseCase(di()));
   di.registerLazySingleton(() => RegisterUserUseCase(di()));
   di.registerLazySingleton(() => ValidateTokenUseCase(di()));
+  di.registerLazySingleton(() => GetCachedTokenUseCase(di()));
+  di.registerLazySingleton(() => LogoutUserUseCase(di()));
 
   // Use cases (Candidates)
   di.registerLazySingleton(() => GetCandidatesUseCase(di()));
@@ -70,4 +86,13 @@ Future<void> dependencyInjection() async {
   di.registerLazySingleton(() => DeleteCandidatesByStatusUseCase(di()));
   di.registerLazySingleton(() => InviteCandidateUseCase(di()));
   di.registerLazySingleton(() => GetCultureFitUseCase(di()));
+
+  // BLoCs
+  di.registerFactory(() => AuthBloc(
+        getCachedTokenUseCase: di(),
+        validateTokenUseCase: di(),
+        logoutUserUseCase: di(),
+      ));
+  di.registerFactory(() => LoginBloc(loginUserUseCase: di()));
+  di.registerFactory(() => RegisterBloc(registerUserUseCase: di()));
 }

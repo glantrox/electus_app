@@ -6,4 +6,6 @@ abstract class AuthRepository {
   Future<Either<Failure, AuthEntity>> loginUser(String email, String password);
   Future<Either<Failure, AuthEntity>> registerUser(String fullName, String email, String password);
   Future<Either<Failure, bool>> validateToken(String token);
+  Future<Either<Failure, void>> logoutUser();
+  Future<Either<Failure, String?>> getToken();
 }

@@ -60,6 +60,13 @@ class _LoginScreenState extends State<LoginScreen> {
               listener: (context, state) {
                 if (state is SuccessLS) {
                   context.read<AuthBloc>().add(AuthLoginRequested());
+                } else if (state is ErrorLS) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: AppColor.errorText,
+                    ),
+                  );
                 }
               },
             ),

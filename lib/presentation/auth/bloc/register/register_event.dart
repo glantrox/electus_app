@@ -1,7 +1,8 @@
 class RegisterEvent {}
 
 class OnFetchRegister extends RegisterEvent {
-  String email;
-  String password;
-  OnFetchRegister({required this.email, required this.password});
+  final String fullName;
+  final String email;
+  final String password;
+  OnFetchRegister({required this.fullName, required this.email, required this.password});
 }

@@ -3,6 +3,13 @@ import 'package:electus_app/presentation/components/auth_textfield.dart';
 import 'package:electus_app/presentation/components/password_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:electus_app/presentation/auth/bloc/auth/auth_bloc.dart';
+import 'package:electus_app/presentation/auth/bloc/auth/auth_event.dart';
+import 'package:electus_app/presentation/auth/bloc/auth/auth_state.dart';
+import 'package:electus_app/presentation/auth/bloc/register/register_bloc.dart';
+import 'package:electus_app/presentation/auth/bloc/register/register_event.dart';
+import 'package:electus_app/presentation/auth/bloc/register/register_state.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -27,8 +34,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Future<void> _handleRegister() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Trigger BLoC event here
-      // context.read<AuthBloc>().add(AuthRegisterEvent(...));
+      context.read<RegisterBloc>().add(
+        OnFetchRegister(
+          fullName: _nameController.text,
+          email: _emailController.text,
+          password: _passwordController.text,
+        ),
+      );
     }
   }
 
@@ -37,27 +49,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       backgroundColor: AppColor.background,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24.0,
-              vertical: 32.0,
+        child: MultiBlocListener(
+          listeners: [
+            BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state.status == AuthStatus.authenticated) {
+                  context.go('/home/dashboard');
+                }
+              },
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const _AuthHeader(),
-                const SizedBox(height: 32),
-                _RegisterFormCard(
-                  formKey: _formKey,
-                  nameController: _nameController,
-                  emailController: _emailController,
-                  passwordController: _passwordController,
-                  onSubmit: _handleRegister,
-                ),
-                const SizedBox(height: 32),
-                const _AuthFooter(),
-              ],
+            BlocListener<RegisterBloc, RegisterState>(
+              listener: (context, state) {
+                if (state is SuccessRS) {
+                  context.read<AuthBloc>().add(AuthLoginRequested());
+                } else if (state is ErrorRS) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: AppColor.errorText,
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 32.0,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const _AuthHeader(),
+                  const SizedBox(height: 32),
+                  _RegisterFormCard(
+                    formKey: _formKey,
+                    nameController: _nameController,
+                    emailController: _emailController,
+                    passwordController: _passwordController,
+                    onSubmit: _handleRegister,
+                    isLoading: context.watch<RegisterBloc>().state is LoadingRS,
+                  ),
+                  const SizedBox(height: 32),
+                  const _AuthFooter(),
+                ],
+              ),
             ),
           ),
         ),
@@ -99,6 +137,7 @@ class _RegisterFormCard extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final VoidCallback onSubmit;
+  final bool isLoading;
 
   const _RegisterFormCard({
     required this.formKey,
@@ -106,6 +145,7 @@ class _RegisterFormCard extends StatelessWidget {
     required this.emailController,
     required this.passwordController,
     required this.onSubmit,
+    required this.isLoading,
   });
 
   @override
@@ -149,7 +189,7 @@ class _RegisterFormCard extends StatelessWidget {
             PasswordTextField(controller: passwordController),
             const SizedBox(height: 32),
             ElevatedButton(
-              onPressed: onSubmit,
+              onPressed: !isLoading ? onSubmit : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColor.primary,
                 foregroundColor: AppColor.textInverse,
@@ -159,9 +199,19 @@ class _RegisterFormCard extends StatelessWidget {
                 ),
                 elevation: 0,
               ),
-              child: const Text(
-                'Create Account',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: !isLoading
+                    ? const [
+                        Text(
+                          'Create Account',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ]
+                    : const [CircularProgressIndicator()],
               ),
             ),
           ],
