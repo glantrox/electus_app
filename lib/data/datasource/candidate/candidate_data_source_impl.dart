@@ -4,17 +4,24 @@ import 'dart:io';
 import 'package:electus_app/data/datasource/candidate/candidate_data_source.dart';
 import 'package:electus_app/data/models/candidate_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class CandidateDataSourceImpl implements CandidateDataSource {
   final http.Client client;
   final String baseUrl = 'http://localhost:3000';
 
-  CandidateDataSourceImpl({required this.client});
+  final SharedPreferences sharedPreferences;
 
-  Map<String, String> _headers() => {
-    'Content-Type': 'application/json',
-    // 'Authorization': 'Bearer $token', // Add token if needed
-  };
+  CandidateDataSourceImpl({required this.client, required this.sharedPreferences});
+
+  Map<String, String> _headers() {
+    final token = sharedPreferences.getString('CACHED_AUTH_TOKEN');
+    return {
+      'Content-Type': 'application/json',
+      if (token != null) 'Authorization': 'Bearer $token',
+    };
+  }
 
   @override
   Future<List<CandidateModel>> getCandidates() async {
@@ -54,7 +61,10 @@ class CandidateDataSourceImpl implements CandidateDataSource {
       'POST',
       Uri.parse('$baseUrl/candidates/upload'),
     );
-    // request.headers.addAll({'Authorization': 'Bearer $token'});
+    final token = sharedPreferences.getString('CACHED_AUTH_TOKEN');
+    if (token != null) {
+      request.headers.addAll({'Authorization': 'Bearer $token'});
+    }
     request.files.add(await http.MultipartFile.fromPath('file', file.path));
 
     final streamedResponse = await request.send();

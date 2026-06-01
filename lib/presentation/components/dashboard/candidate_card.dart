@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:electus_app/core/theme/colors.dart';
+import 'package:electus_app/domain/entities/candidate_entity.dart';
 
 class CandidateCard extends StatelessWidget {
-  const CandidateCard({super.key});
+  final CandidateEntity candidate;
+  const CandidateCard({super.key, required this.candidate});
 
   @override
   Widget build(BuildContext context) {
@@ -40,19 +42,19 @@ class CandidateCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      children: const [
+                      children: [
                         Expanded(
                           child: Text(
-                            'Anonymous Candidate',
-                            style: TextStyle(
+                            candidate.fullName.isNotEmpty ? candidate.fullName : 'Anonymous Candidate',
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: AppColor.textPrimary,
                             ),
                           ),
                         ),
-                        SizedBox(width: 8),
-                        Icon(
+                        const SizedBox(width: 8),
+                        const Icon(
                           Icons.open_in_new,
                           size: 16,
                           color: AppColor.textSecondary,
@@ -60,25 +62,27 @@ class CandidateCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      "Bachelor's • Mid-level",
-                      style: TextStyle(
+                    Text(
+                      "${candidate.education} • ${candidate.experience}",
+                      style: const TextStyle(
                         color: AppColor.textSecondary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Row(
-                      children: const [
-                        Icon(
+                      children: [
+                        const Icon(
                           Icons.access_time,
                           size: 14,
                           color: AppColor.textSecondary,
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
-                          '21 Mei 2026, 16.49',
-                          style: TextStyle(
+                          candidate.createdAt != null 
+                              ? "${candidate.createdAt!.day}/${candidate.createdAt!.month}/${candidate.createdAt!.year}"
+                              : "Recent",
+                          style: const TextStyle(
                             color: AppColor.textSecondary,
                             fontSize: 12,
                           ),
@@ -89,12 +93,7 @@ class CandidateCard extends StatelessWidget {
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: const [
-                        SkillTag(label: 'HTML'),
-                        SkillTag(label: 'CSS'),
-                        SkillTag(label: 'React'),
-                        SkillTag(label: 'TypeScript'),
-                      ],
+                      children: candidate.skills.take(5).map((skill) => SkillTag(label: skill)).toList(),
                     ),
                     const SizedBox(height: 16),
                     Wrap(
@@ -112,16 +111,18 @@ class CandidateCard extends StatelessWidget {
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: const [
-                              Icon(
+                            children: [
+                              const Icon(
                                 Icons.circle,
                                 size: 8,
                                 color: Color(0xFFDC2626),
                               ),
-                              SizedBox(width: 6),
+                              const SizedBox(width: 6),
                               Text(
-                                'R - Realistic',
-                                style: TextStyle(
+                                candidate.hollandCode?.primary.isNotEmpty == true
+                                    ? '${candidate.hollandCode!.primary[0]} - ${candidate.hollandCode!.primary}'
+                                    : 'N/A',
+                                style: const TextStyle(
                                   color: Color(0xFF991B1B),
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -141,16 +142,16 @@ class CandidateCard extends StatelessWidget {
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: const [
-                              Icon(
+                            children: [
+                              const Icon(
                                 Icons.auto_awesome,
                                 size: 14,
                                 color: AppColor.successText,
                               ),
-                              SizedBox(width: 4),
+                              const SizedBox(width: 4),
                               Text(
-                                '85% Match',
-                                style: TextStyle(
+                                '${candidate.matchScore.toInt()}% Match',
+                                style: const TextStyle(
                                   color: AppColor.successText,
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,

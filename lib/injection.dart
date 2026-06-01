@@ -27,6 +27,8 @@ import 'package:electus_app/domain/usecases/auth/logout_user_usecase.dart';
 import 'package:electus_app/presentation/auth/bloc/auth/auth_bloc.dart';
 import 'package:electus_app/presentation/auth/bloc/login/login_bloc.dart';
 import 'package:electus_app/presentation/auth/bloc/register/register_bloc.dart';
+import 'package:electus_app/presentation/bloc/candidate_list/candidate_list_bloc.dart';
+import 'package:electus_app/presentation/bloc/candidate_action/candidate_action_bloc.dart';
 
 // Candidate Usecases
 import 'package:electus_app/domain/usecases/candidates/get_candidates_usecase.dart';
@@ -43,6 +45,33 @@ import 'package:electus_app/domain/usecases/candidates/delete_candidates_by_stat
 import 'package:electus_app/domain/usecases/candidates/invite_candidate_usecase.dart';
 import 'package:electus_app/domain/usecases/candidates/get_culture_fit_usecase.dart';
 
+
+// User Profile
+import 'package:electus_app/data/datasources/user/user_remote_data_source.dart';
+import 'package:electus_app/data/repositories/user/user_repository_impl.dart';
+import 'package:electus_app/domain/repositories/user/user_repository.dart';
+import 'package:electus_app/domain/usecases/user/get_user_profile_usecase.dart';
+import 'package:electus_app/domain/usecases/user/update_user_profile_usecase.dart';
+import 'package:electus_app/domain/usecases/user/update_culture_fit_usecase.dart';
+import 'package:electus_app/presentation/bloc/profile/profile_bloc.dart';
+
+// Notifications
+import 'package:electus_app/data/datasources/notification/notification_remote_data_source.dart';
+import 'package:electus_app/data/repositories/notification/notification_repository_impl.dart';
+import 'package:electus_app/domain/repositories/notification/notification_repository.dart';
+import 'package:electus_app/domain/usecases/notification/get_notifications_usecase.dart';
+import 'package:electus_app/domain/usecases/notification/mark_all_notifications_read_usecase.dart';
+import 'package:electus_app/domain/usecases/notification/mark_notification_read_usecase.dart';
+import 'package:electus_app/presentation/bloc/notification/notification_bloc.dart';
+
+// Analytics
+import 'package:electus_app/data/datasources/analytics/analytics_remote_data_source.dart';
+import 'package:electus_app/data/repositories/analytics/analytics_repository_impl.dart';
+import 'package:electus_app/domain/repositories/analytics/analytics_repository.dart';
+import 'package:electus_app/domain/usecases/analytics/get_analytics_overview_usecase.dart';
+import 'package:electus_app/domain/usecases/analytics/get_analytics_pipeline_usecase.dart';
+import 'package:electus_app/presentation/bloc/analytics/analytics_bloc.dart';
+
 final di = GetIt.instance;
 
 Future<void> dependencyInjection() async {
@@ -57,13 +86,29 @@ Future<void> dependencyInjection() async {
   di.registerLazySingleton<AuthRemoteDatasource>(
       () => AuthRemoteDatasourceImpl(client: di()));
   di.registerLazySingleton<CandidateDataSource>(
-      () => CandidateDataSourceImpl(client: di()));
+      () => CandidateDataSourceImpl(client: di(), sharedPreferences: di()));
+
+
+  di.registerLazySingleton<UserRemoteDataSource>(
+      () => UserRemoteDataSourceImpl(client: di(), sharedPreferences: di()));
+  di.registerLazySingleton<NotificationRemoteDataSource>(
+      () => NotificationRemoteDataSourceImpl(client: di(), sharedPreferences: di()));
+  di.registerLazySingleton<AnalyticsRemoteDataSource>(
+      () => AnalyticsRemoteDataSourceImpl(client: di(), sharedPreferences: di()));
 
   // Repositories
   di.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(remoteDatasource: di(), localDatasource: di()));
   di.registerLazySingleton<CandidateRepository>(
       () => CandidateRepositoryImpl(remoteDatasource: di()));
+
+
+  di.registerLazySingleton<UserRepository>(
+      () => UserRepositoryImpl(remoteDataSource: di()));
+  di.registerLazySingleton<NotificationRepository>(
+      () => NotificationRepositoryImpl(remoteDataSource: di()));
+  di.registerLazySingleton<AnalyticsRepository>(
+      () => AnalyticsRepositoryImpl(remoteDataSource: di()));
 
   // Use cases (Auth)
   di.registerLazySingleton(() => LoginUserUseCase(di()));
@@ -87,6 +132,19 @@ Future<void> dependencyInjection() async {
   di.registerLazySingleton(() => InviteCandidateUseCase(di()));
   di.registerLazySingleton(() => GetCultureFitUseCase(di()));
 
+
+  // Use cases (Profile, Notifs, Analytics)
+  di.registerLazySingleton(() => GetUserProfileUseCase(di()));
+  di.registerLazySingleton(() => UpdateUserProfileUseCase(di()));
+  di.registerLazySingleton(() => UpdateCultureFitUseCase(di()));
+
+  di.registerLazySingleton(() => GetNotificationsUseCase(di()));
+  di.registerLazySingleton(() => MarkAllNotificationsReadUseCase(di()));
+  di.registerLazySingleton(() => MarkNotificationReadUseCase(di()));
+
+  di.registerLazySingleton(() => GetAnalyticsOverviewUseCase(di()));
+  di.registerLazySingleton(() => GetAnalyticsPipelineUseCase(di()));
+
   // BLoCs
   di.registerFactory(() => AuthBloc(
         getCachedTokenUseCase: di(),
@@ -95,4 +153,33 @@ Future<void> dependencyInjection() async {
       ));
   di.registerFactory(() => LoginBloc(loginUserUseCase: di()));
   di.registerFactory(() => RegisterBloc(registerUserUseCase: di()));
+  di.registerFactory(() => CandidateListBloc(
+        getCandidatesUseCase: di(),
+        searchCandidatesUseCase: di(),
+      ));
+  di.registerFactory(() => CandidateActionBloc(
+        createCandidateUseCase: di(),
+        uploadCandidateUseCase: di(),
+        deleteCandidateUseCase: di(),
+        updateCandidateStatusUseCase: di(),
+        inviteCandidateUseCase: di(),
+        deleteAllCandidatesUseCase: di(),
+        deleteDuplicatesUseCase: di(),
+        deleteCandidatesByStatusUseCase: di(),
+      ));
+
+  di.registerFactory(() => ProfileBloc(
+        getProfile: di(),
+        updateProfile: di(),
+        updateCultureFit: di(),
+      ));
+  di.registerFactory(() => NotificationBloc(
+        getNotifications: di(),
+        markAllRead: di(),
+        markRead: di(),
+      ));
+  di.registerFactory(() => AnalyticsBloc(
+        getOverview: di(),
+        getPipeline: di(),
+      ));
 }

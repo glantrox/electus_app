@@ -1,6 +1,12 @@
 import 'package:electus_app/core/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:electus_app/presentation/bloc/notification/notification_bloc.dart';
+import 'package:electus_app/presentation/bloc/notification/notification_event.dart';
+import 'package:electus_app/presentation/bloc/notification/notification_state.dart';
+import 'package:electus_app/domain/entities/notification/notification_entity.dart';
+import 'package:intl/intl.dart';
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});
@@ -26,104 +32,59 @@ class NotificationScreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      // Use ListView instead of SingleChildScrollView for better scrolling performance
-      // if this list grows, though ListView.builder is required for production.
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        children: const [
-          _StreamHeader(),
-          SizedBox(height: 24),
+      body: BlocBuilder<NotificationBloc, NotificationState>(
+        builder: (context, state) {
+          if (state is NotificationLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is NotificationError) {
+            return Center(child: Text(state.message, style: const TextStyle(color: Colors.red)));
+          } else if (state is NotificationLoaded) {
+            final notifications = state.notifications;
 
-          _SectionHeader(title: 'Today'),
-          SizedBox(height: 12),
-          _NotificationCard(
-            accentColor: AppColor.notifPurple,
-            iconBgColor: AppColor.notifPurpleBg,
-            icon: Icons.calendar_today_outlined,
-            title: 'Interview Reminder',
-            time: '30m ago',
-            content: Text(
-              'Interview with Jane Doe starts in 30 minutes.',
-              style: TextStyle(color: AppColor.textSecondary, fontSize: 14),
-            ),
-            badgeLabel: 'Interview Prep',
-          ),
-          SizedBox(height: 12),
-          _NotificationCard(
-            accentColor: AppColor.notifGreen,
-            iconBgColor: AppColor.notifGreenBg,
-            icon: Icons.cloud_upload_outlined,
-            title: 'New CV Uploaded',
-            time: '2h ago',
-            content: Text(
-              'Successfully parsed 5 new CVs from recent upload.',
-              style: TextStyle(color: AppColor.textSecondary, fontSize: 14),
-            ),
-          ),
+            if (notifications.isEmpty) {
+              return const Center(child: Text('No notifications', style: TextStyle(color: AppColor.textSecondary)));
+            }
 
-          SizedBox(height: 32),
-
-          _SectionHeader(title: 'Yesterday'),
-          SizedBox(height: 12),
-          _NotificationCard(
-            accentColor: AppColor.notifBlue,
-            iconBgColor: AppColor.notifBlueBg,
-            icon: Icons.person_outline,
-            title: 'Candidate Status Update',
-            time: 'Yesterday',
-            // Pass a RichText widget for inline styling (the teal names)
-            content: Text.rich(
-              TextSpan(
-                style: TextStyle(
-                  color: AppColor.textSecondary,
-                  fontSize: 14,
-                  height: 1.4,
+            return ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              children: [
+                _StreamHeader(
+                  onMarkAllRead: () {
+                    context.read<NotificationBloc>().add(MarkAllNotificationsReadEvent());
+                  },
                 ),
-                children: [
-                  TextSpan(
-                    text: 'Michael Kim',
-                    style: TextStyle(
-                      color: AppColor.primary,
-                      fontWeight: FontWeight.w500,
+                const SizedBox(height: 24),
+                ...notifications.map((notif) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: _NotificationCard(
+                      entity: notif,
+                      onTap: () {
+                        if (!notif.isRead) {
+                          context.read<NotificationBloc>().add(MarkNotificationReadEvent(notif.id));
+                        }
+                      },
                     ),
-                  ),
-                  TextSpan(text: '\'s profile has been reviewed and moved to '),
-                  TextSpan(
-                    text: 'Interview',
-                    style: TextStyle(
-                      color: AppColor.primary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  TextSpan(text: '.'),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(height: 12),
-          _NotificationCard(
-            accentColor: AppColor.notifOrange,
-            iconBgColor: AppColor.notifOrangeBg,
-            icon: Icons.settings_outlined,
-            title: 'System Alert',
-            time: 'Yesterday',
-            content: Text(
-              'Culture fit target updated in Account Settings.',
-              style: TextStyle(color: AppColor.textSecondary, fontSize: 14),
-            ),
-          ),
+                  );
+                }),
+                const SizedBox(height: 48),
+                const _CaughtUpFooter(),
+                const SizedBox(height: 24),
+              ],
+            );
+          }
 
-          SizedBox(height: 48),
-          _CaughtUpFooter(),
-          SizedBox(height: 24),
-        ],
+          return const SizedBox.shrink();
+        },
       ),
     );
   }
 }
 
 class _StreamHeader extends StatelessWidget {
-  const _StreamHeader();
+  final VoidCallback onMarkAllRead;
+
+  const _StreamHeader({required this.onMarkAllRead});
 
   @override
   Widget build(BuildContext context) {
@@ -140,9 +101,7 @@ class _StreamHeader extends StatelessWidget {
           ),
         ),
         GestureDetector(
-          onTap: () {
-            // Trigger mark all read logic
-          },
+          onTap: onMarkAllRead,
           child: const Text(
             'Mark all as read',
             style: TextStyle(
@@ -157,146 +116,125 @@ class _StreamHeader extends StatelessWidget {
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  final String title;
-
-  const _SectionHeader({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: AppColor.textPrimary,
-      ),
-    );
-  }
-}
-
 class _NotificationCard extends StatelessWidget {
-  final Color accentColor;
-  final Color iconBgColor;
-  final IconData icon;
-  final String title;
-  final String time;
-  final Widget content;
-  final String? badgeLabel;
+  final NotificationEntity entity;
+  final VoidCallback onTap;
 
   const _NotificationCard({
-    required this.accentColor,
-    required this.iconBgColor,
-    required this.icon,
-    required this.title,
-    required this.time,
-    required this.content,
-    this.badgeLabel,
+    required this.entity,
+    required this.onTap,
   });
+
+  Color _getAccentColor() {
+    switch (entity.type) {
+      case 'INTERVIEW_REMINDER': return AppColor.notifPurple;
+      case 'NEW_CV': return AppColor.notifGreen;
+      case 'STATUS_UPDATE': return AppColor.notifBlue;
+      default: return AppColor.notifOrange;
+    }
+  }
+
+  Color _getBgColor() {
+    switch (entity.type) {
+      case 'INTERVIEW_REMINDER': return AppColor.notifPurpleBg;
+      case 'NEW_CV': return AppColor.notifGreenBg;
+      case 'STATUS_UPDATE': return AppColor.notifBlueBg;
+      default: return AppColor.notifOrangeBg;
+    }
+  }
+
+  IconData _getIcon() {
+    switch (entity.type) {
+      case 'INTERVIEW_REMINDER': return Icons.calendar_today_outlined;
+      case 'NEW_CV': return Icons.cloud_upload_outlined;
+      case 'STATUS_UPDATE': return Icons.person_outline;
+      default: return Icons.settings_outlined;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColor.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColor.borderLight, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.01),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: IntrinsicHeight(
-        // Ensures the left border stretches to match dynamic content height
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: entity.isRead ? AppColor.surface : AppColor.surface.withValues(alpha: 0.9),
+          borderRadius: BorderRadius.circular(16),
+          border: entity.isRead ? null : Border.all(color: AppColor.primary.withValues(alpha: 0.3), width: 1),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            )
+          ],
+        ),
+        padding: const EdgeInsets.all(16),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Colored left border accent
             Container(
-              width: 4,
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: accentColor,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  bottomLeft: Radius.circular(12),
-                ),
+                color: _getBgColor(),
+                borderRadius: BorderRadius.circular(12),
               ),
+              child: Icon(_getIcon(), color: _getAccentColor(), size: 24),
             ),
+            const SizedBox(width: 16),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Icon with background
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: iconBgColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(icon, color: accentColor, size: 20),
-                    ),
-                    const SizedBox(width: 16),
-                    // Main content column
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  title,
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColor.textPrimary,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                time,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AppColor.textSecondary,
-                                ),
-                              ),
-                            ],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          entity.title,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: entity.isRead ? FontWeight.w600 : FontWeight.bold,
+                            color: AppColor.textPrimary,
                           ),
-                          const SizedBox(height: 6),
-                          content,
-                          if (badgeLabel != null) ...[
-                            const SizedBox(height: 12),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: iconBgColor,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                badgeLabel!,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: accentColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
+                        ),
+                      ),
+                      Text(
+                        DateFormat('MMM d, h:mm a').format(entity.createdAt),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColor.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    entity.content,
+                    style: TextStyle(
+                      color: entity.isRead ? AppColor.textSecondary : AppColor.textPrimary, 
+                      fontSize: 14,
+                    ),
+                  ),
+                  if (entity.badgeLabel != null && entity.badgeLabel!.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: _getAccentColor().withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        entity.badgeLabel!,
+                        style: TextStyle(
+                          color: _getAccentColor(),
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
-                ),
+                ],
               ),
             ),
           ],
@@ -312,25 +250,24 @@ class _CaughtUpFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color:
-                AppColor.successBackground, // Assuming teal background exists
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons
-                .notifications_off_outlined, // Standard flutter icon closest to design
-            color: AppColor.primary,
-            size: 28,
+      children: const [
+        Icon(Icons.check_circle_outline, color: AppColor.primary, size: 48),
+        SizedBox(height: 12),
+        Text(
+          "You're all caught up!",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: AppColor.textPrimary,
           ),
         ),
-        const SizedBox(height: 16),
-        const Text(
-          "You're all caught up for now.",
-          style: TextStyle(color: AppColor.textSecondary, fontSize: 14),
+        SizedBox(height: 4),
+        Text(
+          "Check back later for more updates.",
+          style: TextStyle(
+            fontSize: 14,
+            color: AppColor.textSecondary,
+          ),
         ),
       ],
     );

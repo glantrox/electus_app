@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:electus_app/presentation/bloc/profile/profile_bloc.dart';
+import 'package:electus_app/presentation/bloc/profile/profile_event.dart';
+import 'package:electus_app/presentation/bloc/profile/profile_state.dart';
 import '../components/account/profile_avatar_section.dart';
 import '../components/account/profile_details_section.dart';
 import '../components/account/theme_selection_section.dart';
@@ -23,9 +27,9 @@ class AccountSettingsScreen extends StatefulWidget {
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   ThemeMode _themeMode = ThemeMode.light;
 
-  // Account Show Information
-  String _name = "Olan";
-  String _email = "olan@email.com";
+  // Local state initialized from BLoC
+  String _name = "";
+  String _email = "";
   String _password = '••••••••';
   File? _selectedImage;
 
@@ -39,11 +43,23 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   };
 
   Map<String, double> _riasecValues = Map.from(_defaultRiasecValues);
+  bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
     _themeMode = widget.currentTheme;
+  }
+
+  void _initializeFromState(ProfileLoaded state) {
+    if (!_isInitialized) {
+      _name = state.user.fullName;
+      _email = state.user.email;
+      if (state.user.riasecTarget.isNotEmpty) {
+        _riasecValues = Map.from(state.user.riasecTarget);
+      }
+      _isInitialized = true;
+    }
   }
 
   void _resetRiasecToDefault() {
@@ -56,6 +72,9 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     setState(() {
       _riasecValues[label] = value;
     });
+    // Dispatch event to update culture fit immediately or via a save button?
+    // According to UI there's no save button for culture, it might auto-save or save on end
+    context.read<ProfileBloc>().add(UpdateCultureFitEvent(_riasecValues));
   }
 
   void _saveProfileDetails(String name, String email, String password) {
@@ -64,16 +83,27 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       _email = email;
       _password = password;
     });
-    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Profile Saved!')));
+    
+    context.read<ProfileBloc>().add(UpdateProfileEvent(
+      fullName: name,
+      email: email,
+      password: password != '••••••••' ? password : null,
+      avatar: _selectedImage,
+    ));
   }
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (!mounted) return;
     if (image != null) {
       setState(() {
         _selectedImage = File(image.path);
       });
+      // Optionally save immediately
+      context.read<ProfileBloc>().add(UpdateProfileEvent(
+        avatar: _selectedImage,
+      ));
     }
   }
 
@@ -90,68 +120,88 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Account",
-                style: TextStyle(
-                  color: colorScheme.onSurface,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                "Manage your profile and target culture settings",
-                style: TextStyle(
-                  color: colorScheme.onSurfaceVariant,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 24),
+      body: BlocConsumer<ProfileBloc, ProfileState>(
+        listener: (context, state) {
+          if (state is ProfileActionSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+          } else if (state is ProfileError) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+          }
+        },
+        builder: (context, state) {
+          if (state is ProfileLoading && !_isInitialized) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          
+          if (state is ProfileLoaded) {
+            _initializeFromState(state);
+          }
 
-              // Profile Section Container
-              _buildCardContainer(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ProfileAvatarSection(
-                      selectedImage: _selectedImage,
-                      onPickImage: _pickImage,
+          return Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Account",
+                    style: TextStyle(
+                      color: colorScheme.onSurface,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(height: 20),
-                    ProfileDetailsSection(
-                      initialName: _name,
-                      initialEmail: _email,
-                      initialPassword: _password,
-                      onSave: _saveProfileDetails,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Manage your profile and target culture settings",
+                    style: TextStyle(
+                      color: colorScheme.onSurfaceVariant,
+                      fontSize: 14,
                     ),
-                    const SizedBox(height: 24),
-                    ThemeSelectionSection(
-                      currentThemeMode: _themeMode,
-                      onThemeChanged: _handleThemeChanged,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
+                  ),
+                  const SizedBox(height: 24),
 
-              // Target Culture Section Container
-              _buildCardContainer(
-                child: TargetCultureSection(
-                  riasecValues: _riasecValues,
-                  onReset: _resetRiasecToDefault,
-                  onChanged: _updateRiasecValue,
-                ),
+                  // Profile Section Container
+                  _buildCardContainer(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ProfileAvatarSection(
+                          selectedImage: _selectedImage,
+                          onPickImage: _pickImage,
+                          // Optional: pass avatarUrl to load remote image if _selectedImage is null
+                        ),
+                        const SizedBox(height: 20),
+                        ProfileDetailsSection(
+                          initialName: _name,
+                          initialEmail: _email,
+                          initialPassword: _password,
+                          onSave: _saveProfileDetails,
+                        ),
+                        const SizedBox(height: 24),
+                        ThemeSelectionSection(
+                          currentThemeMode: _themeMode,
+                          onThemeChanged: _handleThemeChanged,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Target Culture Section Container
+                  _buildCardContainer(
+                    child: TargetCultureSection(
+                      riasecValues: _riasecValues,
+                      onReset: _resetRiasecToDefault,
+                      onChanged: _updateRiasecValue,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        }
       ),
     );
   }

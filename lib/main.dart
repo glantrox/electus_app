@@ -4,6 +4,15 @@ import 'package:electus_app/router.dart';
 import 'package:electus_app/presentation/auth/bloc/auth/auth_bloc.dart';
 import 'package:electus_app/presentation/auth/bloc/auth/auth_event.dart';
 import 'package:electus_app/presentation/auth/bloc/register/register_bloc.dart';
+import 'package:electus_app/presentation/bloc/candidate_list/candidate_list_bloc.dart';
+import 'package:electus_app/presentation/bloc/candidate_action/candidate_action_bloc.dart';
+
+import 'package:electus_app/presentation/bloc/profile/profile_bloc.dart';
+import 'package:electus_app/presentation/bloc/profile/profile_event.dart';
+import 'package:electus_app/presentation/bloc/notification/notification_bloc.dart';
+import 'package:electus_app/presentation/bloc/notification/notification_event.dart';
+import 'package:electus_app/presentation/bloc/analytics/analytics_bloc.dart';
+import 'package:electus_app/presentation/bloc/analytics/analytics_event.dart';
 import 'package:electus_app/injection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +57,13 @@ class _MainAppState extends State<MainApp> {
       providers: [
         BlocProvider<LoginBloc>(create: (context) => di<LoginBloc>()),
         BlocProvider<RegisterBloc>(create: (context) => di<RegisterBloc>()),
+        BlocProvider<CandidateListBloc>(create: (context) => di<CandidateListBloc>()),
+
+        BlocProvider<CandidateActionBloc>(create: (context) => di<CandidateActionBloc>()),
+        BlocProvider<ProfileBloc>(create: (context) => di<ProfileBloc>()..add(FetchProfileEvent())),
+        BlocProvider<NotificationBloc>(create: (context) => di<NotificationBloc>()..add(FetchNotificationsEvent())),
+        BlocProvider<AnalyticsBloc>(create: (context) => di<AnalyticsBloc>()..add(FetchAnalyticsEvent())),
+
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

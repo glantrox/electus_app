@@ -5,7 +5,7 @@ import '../../models/auth_response_model.dart';
 
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   final http.Client client;
-  final String baseUrl = 'http://localhost:3000/auth';
+  final String baseUrl = 'http://localhost:3000';
 
   AuthRemoteDatasourceImpl({required this.client});
 
@@ -14,7 +14,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     final response = await client.post(
       Uri.parse('$baseUrl/auth/login'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
+      body: jsonEncode({'DeviceName': 'Flutter Client', 'Email': email, 'Password': password}),
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -34,9 +34,10 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       Uri.parse('$baseUrl/auth/register'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'fullName': fullName,
-        'email': email,
-        'password': password,
+        'DeviceName': 'Flutter Client',
+        'FullName': fullName,
+        'Email': email,
+        'Password': password,
       }),
     );
 

@@ -4,8 +4,16 @@ import 'package:go_router/go_router.dart';
 
 class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double safeAreaTop;
+  final String userName;
+  final String avatarUrl;
+  final String totalApplicants;
 
-  DashboardHeaderDelegate({required this.safeAreaTop});
+  DashboardHeaderDelegate({
+    required this.safeAreaTop,
+    required this.userName,
+    required this.avatarUrl,
+    required this.totalApplicants,
+  });
 
   @override
   Widget build(
@@ -47,18 +55,16 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                         children: [
                           Row(
                             children: [
-                              const CircleAvatar(
+                              CircleAvatar(
                                 radius: 20,
-                                backgroundImage: NetworkImage(
-                                  'https://i.pravatar.cc/150?img=47',
-                                ),
+                                backgroundImage: avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : const NetworkImage('https://i.pravatar.cc/150?img=47'),
                                 backgroundColor: Colors.white,
                               ),
                               const SizedBox(width: 12),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: const [
-                                  Text(
+                                children: [
+                                  const Text(
                                     'Welcome back,',
                                     style: TextStyle(
                                       color: Colors.white70,
@@ -66,7 +72,7 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                                     ),
                                   ),
                                   Text(
-                                    'Olan Maulana',
+                                    userName,
                                     style: TextStyle(
                                       color: AppColor.textInverse,
                                       fontSize: 16,
@@ -111,9 +117,9 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                         ],
                       ),
                       const SizedBox(height: 24),
-                      const Text(
-                        '1,248,123',
-                        style: TextStyle(
+                      Text(
+                        totalApplicants,
+                        style: const TextStyle(
                           color: AppColor.textInverse,
                           fontSize: 36,
                           fontWeight: FontWeight.bold,

@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:electus_app/presentation/bloc/candidate_action/candidate_action_bloc.dart';
+import 'package:electus_app/presentation/bloc/candidate_action/candidate_action_event.dart';
+import 'package:electus_app/presentation/bloc/candidate_action/candidate_action_state.dart';
 
 class ScanCvScreen extends StatefulWidget {
   const ScanCvScreen({super.key});
@@ -73,9 +78,10 @@ class _ScanCvScreenState extends State<ScanCvScreen> {
       return;
     }
     try {
-      await _cameraController!.takePicture();
-      // Route to crop/preview screen and pass the XFile path
-      // context.push('/scan_preview', extra: picture.path);
+      final picture = await _cameraController!.takePicture();
+      if (mounted) {
+        context.read<CandidateActionBloc>().add(UploadCandidateEvent(File(picture.path)));
+      }
     } catch (e) {
       debugPrint('Capture Error: $e');
     }
@@ -108,8 +114,9 @@ class _ScanCvScreenState extends State<ScanCvScreen> {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      // Route to crop/preview screen and pass the XFile path
-      // context.push('/scan_preview', extra: image.path);
+      if (mounted) {
+        context.read<CandidateActionBloc>().add(UploadCandidateEvent(File(image.path)));
+      }
     }
   }
 
@@ -156,9 +163,30 @@ class _ScanCvScreenState extends State<ScanCvScreen> {
     }
 
     // Wrap in pop scope to ensure hardware back button behaves properly with full-screen views
-    return PopScope(
-      canPop: true,
-      child: Scaffold(
+    return BlocListener<CandidateActionBloc, CandidateActionState>(
+      listener: (context, state) {
+        if (state is CandidateActionLoading) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Uploading CV...')),
+          );
+        } else if (state is CandidateActionSuccess) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+          if (context.canPop()) {
+            context.pop();
+          }
+        } else if (state is CandidateActionError) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+      },
+      child: PopScope(
+        canPop: true,
+        child: Scaffold(
         backgroundColor: Colors.black,
         body: Stack(
           fit: StackFit.expand,
@@ -205,6 +233,7 @@ class _ScanCvScreenState extends State<ScanCvScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

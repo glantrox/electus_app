@@ -2,15 +2,19 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:electus_app/data/datasource/candidate/candidate_data_source_impl.dart';
 import 'package:electus_app/data/models/candidate_model.dart';
 
 class MockHttpClient extends Mock implements http.Client {}
+class MockSharedPreferences extends Mock implements SharedPreferences {}
 class FakeUri extends Fake implements Uri {}
 
 void main() {
   late CandidateDataSourceImpl datasource;
   late MockHttpClient mockHttpClient;
+  late MockSharedPreferences mockSharedPreferences;
 
   setUpAll(() {
     registerFallbackValue(FakeUri());
@@ -18,7 +22,9 @@ void main() {
 
   setUp(() {
     mockHttpClient = MockHttpClient();
-    datasource = CandidateDataSourceImpl(client: mockHttpClient);
+    mockSharedPreferences = MockSharedPreferences();
+    when(() => mockSharedPreferences.getString('CACHED_AUTH_TOKEN')).thenReturn('test_token');
+    datasource = CandidateDataSourceImpl(client: mockHttpClient, sharedPreferences: mockSharedPreferences);
   });
 
   group('CandidateDataSourceImpl', () {

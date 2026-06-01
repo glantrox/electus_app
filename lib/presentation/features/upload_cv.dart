@@ -1,5 +1,11 @@
 import 'package:electus_app/core/theme/colors.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:electus_app/presentation/bloc/candidate_action/candidate_action_bloc.dart';
+import 'package:electus_app/presentation/bloc/candidate_action/candidate_action_event.dart';
+import 'package:electus_app/presentation/bloc/candidate_action/candidate_action_state.dart';
 
 class UploadCvScreen extends StatelessWidget {
   const UploadCvScreen({super.key});
@@ -111,21 +117,53 @@ class _DropzoneCard extends StatelessWidget {
           const SizedBox(height: 32),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                // Implement file picker
+            child: BlocConsumer<CandidateActionBloc, CandidateActionState>(
+              listener: (context, state) {
+                if (state is CandidateActionSuccess) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
+                } else if (state is CandidateActionError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
+                }
               },
-              icon: const Icon(Icons.folder_open),
-              label: const Text('Browse Files'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColor.primary,
-                foregroundColor: AppColor.textInverse,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                elevation: 0,
-              ),
+              builder: (context, state) {
+                final isLoading = state is CandidateActionLoading;
+                return ElevatedButton.icon(
+                  onPressed: isLoading
+                      ? null
+                      : () async {
+                          FilePickerResult? result = await FilePicker.pickFiles(
+                            type: FileType.custom,
+                            allowedExtensions: ['pdf', 'doc', 'docx', 'txt'],
+                          );
+                          if (result != null && result.files.single.path != null) {
+                            File file = File(result.files.single.path!);
+                            if (context.mounted) {
+                              context.read<CandidateActionBloc>().add(UploadCandidateEvent(file));
+                            }
+                          }
+                        },
+                  icon: isLoading
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                      : const Icon(Icons.folder_open),
+                  label: Text(isLoading ? 'Uploading...' : 'Browse Files'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColor.primary,
+                    foregroundColor: AppColor.textInverse,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    elevation: 0,
+                  ),
+                );
+              },
             ),
           ),
           const SizedBox(height: 16),
