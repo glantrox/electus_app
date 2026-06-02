@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -39,6 +41,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
   Map<String, double> _riasecValues = Map.from(_defaultRiasecValues);
   bool _isInitialized = false;
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -66,9 +69,11 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     setState(() {
       _riasecValues[label] = value;
     });
-    // Dispatch event to update culture fit immediately or via a save button?
-    // According to UI there's no save button for culture, it might auto-save or save on end
-    context.read<ProfileBloc>().add(UpdateCultureFitEvent(_riasecValues));
+
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      context.read<ProfileBloc>().add(UpdateCultureFitEvent(_riasecValues));
+    });
   }
 
   void _saveProfileDetails(String name, String email, String password) {
@@ -105,6 +110,12 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
   void _handleThemeChanged(ThemeMode newTheme) {
     widget.themeChanged(newTheme);
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
   }
 
   @override
