@@ -1,6 +1,6 @@
 # Electus App
 
-Aplikasi Flutter yang dibangun dengan menerapkan arsitektur terstruktur, State Management BLoC, dan navigasi menggunakan GoRouter.
+Aplikasi yang dibangun dengan menerapkan arsitektur terstruktur, State Management BLoC, dan navigasi menggunakan GoRouter.
 
 ## Teknologi Utama
 - **Framework:** Flutter
