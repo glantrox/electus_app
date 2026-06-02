@@ -24,12 +24,10 @@ final _accountNavKey = GlobalKey<NavigatorState>(debugLabel: 'account');
 class AppRouter {
   final AuthBloc authBloc;
   final void Function(ThemeMode) onThemeChanged;
-  final ThemeMode themeMode;
 
   AppRouter(
     this.authBloc, {
     required this.onThemeChanged,
-    required this.themeMode,
   });
 
   late final GoRouter config = GoRouter(
@@ -135,7 +133,6 @@ class AppRouter {
                 path: '/home/account_settings',
                 builder: (context, state) => AccountSettingsScreen(
                   themeChanged: onThemeChanged,
-                  currentTheme: themeMode,
                 ),
               ),
             ],

@@ -7,12 +7,18 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
   final String userName;
   final String avatarUrl;
   final String totalApplicants;
+  final FocusNode? searchFocusNode;
+  final TextEditingController? searchController;
+  final VoidCallback? onBack;
 
   DashboardHeaderDelegate({
     required this.safeAreaTop,
     required this.userName,
     required this.avatarUrl,
     required this.totalApplicants,
+    this.searchFocusNode,
+    this.searchController,
+    this.onBack,
   });
 
   @override
@@ -27,7 +33,7 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColor.primary,
+        color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(32 * expandedPercent),
           bottomRight: Radius.circular(32 * expandedPercent),
@@ -45,11 +51,11 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
               child: Opacity(
                 opacity: expandedPercent,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  padding: EdgeInsets.symmetric(horizontal: 24.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -60,11 +66,11 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                                 backgroundImage: avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : const NetworkImage('https://i.pravatar.cc/150?img=47'),
                                 backgroundColor: Colors.white,
                               ),
-                              const SizedBox(width: 12),
+                              SizedBox(width: 12),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
+                                  Text(
                                     'Welcome back,',
                                     style: TextStyle(
                                       color: Colors.white70,
@@ -74,7 +80,7 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                                   Text(
                                     userName,
                                     style: TextStyle(
-                                      color: AppColor.textInverse,
+                                      color: Theme.of(context).colorScheme.onPrimary,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -86,7 +92,7 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                           Opacity(
                             opacity: expandedPercent,
                             child: Container(
-                              padding: const EdgeInsets.all(6),
+                              padding: EdgeInsets.all(6),
                               decoration: BoxDecoration(
                                 color: Colors.white.withValues(alpha: 0.15),
                                 shape: BoxShape.circle,
@@ -96,13 +102,13 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                                   IconButton(
                                     onPressed: () =>
                                         context.push('/notification'),
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.notifications_none,
                                       color: Colors.white,
                                       size: 22,
                                     ),
                                   ),
-                                  const Positioned(
+                                  Positioned(
                                     top: 2,
                                     right: 2,
                                     child: CircleAvatar(
@@ -116,18 +122,18 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 24),
+                      SizedBox(height: 24),
                       Text(
                         totalApplicants,
-                        style: const TextStyle(
-                          color: AppColor.textInverse,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: 36,
                           fontWeight: FontWeight.bold,
                           letterSpacing: -1,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      const Text(
+                      SizedBox(height: 8),
+                      Text(
                         "Here's your hiring overview for today.",
                         style: TextStyle(color: Colors.white70, fontSize: 16),
                       ),
@@ -145,41 +151,64 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                 Expanded(
                   child: Container(
                     height: 48,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: AppColor.surface,
+                      color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.search,
-                          color: AppColor.textSecondary,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 12),
-                        const Expanded(
+                        if (searchFocusNode?.hasFocus == true)
+                          GestureDetector(
+                            onTap: onBack,
+                            child: Padding(
+                              padding: EdgeInsets.only(right: 12),
+                              child: Icon(
+                                Icons.arrow_back,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                size: 20,
+                              ),
+                            ),
+                          )
+                        else
+                          Padding(
+                            padding: EdgeInsets.only(right: 12),
+                            child: Icon(
+                              Icons.search,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              size: 20,
+                            ),
+                          ),
+                        Expanded(
                           child: TextField(
+                            controller: searchController,
+                            focusNode: searchFocusNode,
+                            textAlignVertical: TextAlignVertical.center,
                             decoration: InputDecoration(
+                              isDense: true,
                               hintText: 'Search candidates, skills...',
                               hintStyle: TextStyle(
-                                color: AppColor.textSecondary,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 fontSize: 14,
                               ),
                               border: InputBorder.none,
-                              contentPadding: EdgeInsets.only(bottom: 12),
+                              focusedBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              contentPadding: EdgeInsets.zero,
                             ),
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.all(4),
+                          padding: EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: AppColor.background,
+                            color: Theme.of(context).scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(6),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.tune,
-                            color: AppColor.textPrimary,
+                            color: Theme.of(context).colorScheme.onSurface,
                             size: 16,
                           ),
                         ),
@@ -188,7 +217,7 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                   ),
                 ),
                 if (percent > 0.5) ...[
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   Opacity(
                     opacity: ((percent - 0.5) * 2).clamp(0.0, 1.0),
                     child: Container(
@@ -203,12 +232,12 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                         children: [
                           IconButton(
                             onPressed: () => context.push('/notification'),
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.notifications_none,
                               color: Colors.white,
                             ),
                           ),
-                          const Positioned(
+                          Positioned(
                             top: 12,
                             right: 12,
                             child: CircleAvatar(
@@ -237,6 +266,6 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant DashboardHeaderDelegate oldDelegate) {
-    return safeAreaTop != oldDelegate.safeAreaTop;
+    return true;
   }
 }

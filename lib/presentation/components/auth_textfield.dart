@@ -35,16 +35,16 @@ class AuthTextField extends StatelessWidget {
           children: [
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: AppColor.textPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             ?labelSuffix,
           ],
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
@@ -52,13 +52,13 @@ class AuthTextField extends StatelessWidget {
           obscureText: obscureText,
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: const TextStyle(
-              color: AppColor.textSecondary,
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 15,
             ),
             filled: true,
-            fillColor: AppColor.surface,
-            contentPadding: const EdgeInsets.symmetric(
+            fillColor: Theme.of(context).colorScheme.surface,
+            contentPadding: EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 16,
             ),
@@ -66,17 +66,16 @@ class AuthTextField extends StatelessWidget {
             suffixIcon: suffixIcon,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColor.borderLight),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColor.borderLight),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: AppColor
-                    .primary, // The blue border in the image indicates focus state
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.primary, // The blue border in the image indicates focus state
                 width: 1.5,
               ),
             ),

@@ -9,15 +9,15 @@ class FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     return Container(
-      color: AppColor.background, 
-      padding: const EdgeInsets.only(top: 16, bottom: 16),
+      color: Theme.of(context).scaffoldBackgroundColor, 
+      padding: EdgeInsets.only(top: 16, bottom: 16),
       alignment: Alignment.center,
       child: SizedBox(
         height: 36,
         child: ListView(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          children: const [
+          padding: EdgeInsets.symmetric(horizontal: 24),
+          children: [
             FilterChipWidget(label: 'All Roles', isSelected: true),
             SizedBox(width: 8),
             FilterChipWidget(label: 'Frontend Dev', isSelected: false),
@@ -37,7 +37,7 @@ class FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-      false;
+      true;
 }
 
 class FilterChipWidget extends StatelessWidget {
@@ -53,19 +53,19 @@ class FilterChipWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: isSelected ? AppColor.primary : AppColor.surface,
+        color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isSelected ? AppColor.primary : const Color(0xFFE5E7EB),
+          color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.outlineVariant,
         ),
       ),
       child: Center(
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.white : AppColor.textPrimary,
+            color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w600,
             fontSize: 14,
           ),

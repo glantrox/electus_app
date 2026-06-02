@@ -38,8 +38,11 @@ class TargetCultureSection extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.auto_graph,
-                      color: Color(0xFF00685C), size: 20),
+                  const Icon(
+                    Icons.auto_graph,
+                    color: Color(0xFF00685C),
+                    size: 20,
+                  ),
                   const SizedBox(width: 8),
                   Flexible(
                     child: Text(
@@ -57,12 +60,15 @@ class TargetCultureSection extends StatelessWidget {
             ),
             TextButton.icon(
               onPressed: onReset,
-              icon: const Icon(Icons.restart_alt,
-                  color: Color(0xFF00685C), size: 18),
+              icon: const Icon(
+                Icons.restart_alt,
+                color: Color(0xFF00685C),
+                size: 18,
+              ),
               label: const SizedBox(
                 width: 80,
                 child: Text(
-                  "Reset to Startup Default",
+                  "Reset",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Color(0xFF00685C), fontSize: 11),
                 ),

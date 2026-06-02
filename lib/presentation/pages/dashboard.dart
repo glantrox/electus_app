@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:electus_app/core/theme/colors.dart';
 import '../components/dashboard/dashboard_header.dart';
@@ -15,6 +16,8 @@ import 'package:electus_app/presentation/bloc/analytics/analytics_bloc.dart';
 import 'package:electus_app/presentation/bloc/analytics/analytics_state.dart';
 import 'package:electus_app/presentation/bloc/profile/profile_bloc.dart';
 import 'package:electus_app/presentation/bloc/profile/profile_state.dart';
+import 'package:electus_app/presentation/components/common/skeleton/candidate_card_skeleton.dart';
+import 'package:electus_app/presentation/components/common/skeleton/stat_card_skeleton.dart';
 
 
 class DashboardScreen extends StatefulWidget {
@@ -25,16 +28,50 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final FocusNode _searchFocusNode = FocusNode();
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+
   @override
   void initState() {
     super.initState();
+    _searchFocusNode.addListener(() {
+      setState(() {});
+    });
+    _searchController.addListener(_onSearchChanged);
     context.read<CandidateListBloc>().add(FetchCandidates());
+  }
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      final query = _searchController.text.trim();
+      if (query.isNotEmpty) {
+        context.read<CandidateListBloc>().add(SearchCandidatesEvent(query));
+      } else {
+        context.read<CandidateListBloc>().add(FetchCandidates());
+      }
+    });
+  }
+
+  void _onBack() {
+    _searchController.clear();
+    _searchFocusNode.unfocus();
+    context.read<CandidateListBloc>().add(FetchCandidates());
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: CustomScrollView(
         slivers: [
           BlocBuilder<ProfileBloc, ProfileState>(
@@ -61,20 +98,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       userName: userName,
                       avatarUrl: avatarUrl,
                       totalApplicants: totalApplicants,
+                      searchFocusNode: _searchFocusNode,
+                      searchController: _searchController,
+                      onBack: _onBack,
                     ),
                   );
                 },
               );
             },
           ),
-          SliverToBoxAdapter(
+          if (!_searchFocusNode.hasFocus)
+            SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: EdgeInsets.all(24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildOverviewHeader(),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
                   _buildStatCardsGrid(),
                 ],
               ),
@@ -85,12 +126,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
             delegate: FilterHeaderDelegate(),
           ),
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            padding: EdgeInsets.symmetric(horizontal: 24.0),
             sliver: BlocBuilder<CandidateListBloc, CandidateListState>(
               builder: (context, state) {
                 if (state is CandidateListLoading) {
-                  return const SliverToBoxAdapter(
-                    child: Center(child: CircularProgressIndicator()),
+                  return SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      return CandidateCardSkeleton();
+                    }, childCount: 3),
                   );
                 } else if (state is CandidateListError) {
                   return SliverToBoxAdapter(
@@ -106,7 +149,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   return SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
+                        padding: EdgeInsets.only(bottom: 16.0),
                         child: CandidateCard(candidate: candidates[index]),
                       );
                     }, childCount: candidates.length),
@@ -126,23 +169,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
+        Text(
           'Overview',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: AppColor.textPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         TextButton(
           onPressed: () {},
           style: TextButton.styleFrom(
-            foregroundColor: AppColor.primary,
+            foregroundColor: Theme.of(context).colorScheme.primary,
             padding: EdgeInsets.zero,
             minimumSize: Size.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
@@ -165,7 +208,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return BlocBuilder<AnalyticsBloc, AnalyticsState>(
       builder: (context, state) {
         if (state is AnalyticsLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            childAspectRatio: 0.85,
+            children: List.generate(4, (index) => StatCardSkeleton()),
+          );
         } else if (state is AnalyticsError) {
           return Center(child: Text('Failed to load metrics', style: TextStyle(color: Colors.red)));
         } else if (state is AnalyticsLoaded) {
@@ -189,24 +240,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               StatCard(
                 icon: Icons.description_outlined,
-                iconColor: AppColor.iconTeal,
-                iconBgColor: AppColor.iconTealBg,
+                iconColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                iconBgColor: Theme.of(context).colorScheme.primaryContainer,
                 title: 'TOTAL CVS',
                 count: totalCvs,
                 tagText: trendText.isNotEmpty ? trendText : '+0% this week',
-                tagColor: AppColor.successText,
-                tagBgColor: AppColor.successBackground,
+                tagColor: const Color(0xFF317566),
+                tagBgColor: const Color(0xFFEAF5F2),
                 tagIcon: Icons.trending_up,
               ),
               StatCard(
                 icon: Icons.assignment_late_outlined,
-                iconColor: AppColor.warningText,
-                iconBgColor: AppColor.warningBackground,
+                iconColor: const Color(0xFFD97706),
+                iconBgColor: const Color(0xFFFFF3E8),
                 title: 'PENDING REVIEW',
                 count: pendingReview,
                 tagText: 'Needs attention',
-                tagColor: AppColor.warningText,
-                tagBgColor: AppColor.warningBackground,
+                tagColor: const Color(0xFFD97706),
+                tagBgColor: const Color(0xFFFFF3E8),
                 tagIcon: Icons.schedule,
               ),
               StatCard(
@@ -230,7 +281,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ],
           );
         }
-        return const SizedBox.shrink();
+        return SizedBox.shrink();
       }
     );
   }

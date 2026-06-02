@@ -9,24 +9,19 @@ import '../components/account/profile_avatar_section.dart';
 import '../components/account/profile_details_section.dart';
 import '../components/account/theme_selection_section.dart';
 import '../components/account/target_culture_section.dart';
+import 'package:electus_app/presentation/components/common/skeleton/shimmer_skeleton.dart';
+import 'package:electus_app/presentation/components/common/skeleton/skeleton_card.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
   final void Function(ThemeMode) themeChanged;
-  final ThemeMode currentTheme;
 
-  const AccountSettingsScreen({
-    super.key,
-    required this.themeChanged,
-    required this.currentTheme,
-  });
+  const AccountSettingsScreen({super.key, required this.themeChanged});
 
   @override
   State<AccountSettingsScreen> createState() => _AccountSettingsScreenState();
 }
 
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
-  ThemeMode _themeMode = ThemeMode.light;
-
   // Local state initialized from BLoC
   String _name = "";
   String _email = "";
@@ -48,7 +43,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _themeMode = widget.currentTheme;
   }
 
   void _initializeFromState(ProfileLoaded state) {
@@ -83,13 +77,15 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       _email = email;
       _password = password;
     });
-    
-    context.read<ProfileBloc>().add(UpdateProfileEvent(
-      fullName: name,
-      email: email,
-      password: password != '••••••••' ? password : null,
-      avatar: _selectedImage,
-    ));
+
+    context.read<ProfileBloc>().add(
+      UpdateProfileEvent(
+        fullName: name,
+        email: email,
+        password: password != '••••••••' ? password : null,
+        avatar: _selectedImage,
+      ),
+    );
   }
 
   Future<void> _pickImage() async {
@@ -101,16 +97,13 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
         _selectedImage = File(image.path);
       });
       // Optionally save immediately
-      context.read<ProfileBloc>().add(UpdateProfileEvent(
-        avatar: _selectedImage,
-      ));
+      context.read<ProfileBloc>().add(
+        UpdateProfileEvent(avatar: _selectedImage),
+      );
     }
   }
 
   void _handleThemeChanged(ThemeMode newTheme) {
-    setState(() {
-      _themeMode = newTheme;
-    });
     widget.themeChanged(newTheme);
   }
 
@@ -118,90 +111,147 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: BlocConsumer<ProfileBloc, ProfileState>(
-        listener: (context, state) {
-          if (state is ProfileActionSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
-          } else if (state is ProfileError) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
-          }
-        },
-        builder: (context, state) {
-          if (state is ProfileLoading && !_isInitialized) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          
-          if (state is ProfileLoaded) {
-            _initializeFromState(state);
-          }
-
-          return Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Account",
-                    style: TextStyle(
-                      color: colorScheme.onSurface,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: BlocConsumer<ProfileBloc, ProfileState>(
+          listener: (context, state) {
+            if (state is ProfileActionSuccess) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
+            } else if (state is ProfileError) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
+            }
+          },
+          builder: (context, state) {
+            if (state is ProfileLoading && !_isInitialized) {
+              return Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 40,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "Manage your profile and target culture settings",
-                    style: TextStyle(
-                      color: colorScheme.onSurfaceVariant,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Profile Section Container
-                  _buildCardContainer(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ProfileAvatarSection(
-                          selectedImage: _selectedImage,
-                          onPickImage: _pickImage,
-                          // Optional: pass avatarUrl to load remote image if _selectedImage is null
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SkeletonBox(width: 150, height: 32),
+                      const SizedBox(height: 4),
+                      const SkeletonBox(width: 250, height: 16),
+                      const SizedBox(height: 24),
+                      _buildCardContainer(
+                        child: ShimmerSkeleton(
+                          child: Column(
+                            children: [
+                              const SkeletonBox(
+                                width: 100,
+                                height: 100,
+                                borderRadius: 50,
+                              ),
+                              const SizedBox(height: 40),
+                              const SkeletonBox(
+                                width: double.infinity,
+                                height: 56,
+                              ),
+                              const SizedBox(height: 16),
+                              const SkeletonBox(
+                                width: double.infinity,
+                                height: 56,
+                              ),
+                              const SizedBox(height: 16),
+                              const SkeletonBox(
+                                width: double.infinity,
+                                height: 56,
+                              ),
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: 20),
-                        ProfileDetailsSection(
-                          initialName: _name,
-                          initialEmail: _email,
-                          initialPassword: _password,
-                          onSave: _saveProfileDetails,
-                        ),
-                        const SizedBox(height: 24),
-                        ThemeSelectionSection(
-                          currentThemeMode: _themeMode,
-                          onThemeChanged: _handleThemeChanged,
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 24),
+                ),
+              );
+            }
 
-                  // Target Culture Section Container
-                  _buildCardContainer(
-                    child: TargetCultureSection(
-                      riasecValues: _riasecValues,
-                      onReset: _resetRiasecToDefault,
-                      onChanged: _updateRiasecValue,
+            if (state is ProfileLoaded) {
+              _initializeFromState(state);
+            }
+
+            return Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 40,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Account",
+                      style: TextStyle(
+                        color: colorScheme.onSurface,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 4),
+                    Text(
+                      "Manage your profile and target culture settings",
+                      style: TextStyle(
+                        color: colorScheme.onSurfaceVariant,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Profile Section Container
+                    _buildCardContainer(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ProfileAvatarSection(
+                            selectedImage: _selectedImage,
+                            onPickImage: _pickImage,
+                            // Optional: pass avatarUrl to load remote image if _selectedImage is null
+                          ),
+                          const SizedBox(height: 20),
+                          ProfileDetailsSection(
+                            initialName: _name,
+                            initialEmail: _email,
+                            initialPassword: _password,
+                            onSave: _saveProfileDetails,
+                          ),
+                          const SizedBox(height: 24),
+                          ThemeSelectionSection(
+                            currentThemeMode:
+                                Theme.of(context).brightness == Brightness.dark
+                                ? ThemeMode.dark
+                                : ThemeMode.light,
+                            onThemeChanged: _handleThemeChanged,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Target Culture Section Container
+                    _buildCardContainer(
+                      child: TargetCultureSection(
+                        riasecValues: _riasecValues,
+                        onReset: _resetRiasecToDefault,
+                        onChanged: _updateRiasecValue,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        }
+            );
+          },
+        ),
       ),
     );
   }
@@ -212,16 +262,13 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       constraints: const BoxConstraints(maxWidth: 500),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        border: Border.all(
-          color: const Color(0xFF2D7D6F),
-          width: 1.0,
-        ),
+        border: Border.all(color: const Color(0xFF2D7D6F), width: 1.0),
         boxShadow: const [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 12,
             offset: Offset(0, 4),
-          )
+          ),
         ],
         borderRadius: BorderRadius.circular(20),
       ),

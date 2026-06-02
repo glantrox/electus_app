@@ -37,6 +37,16 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
   ThemeMode _themeMode = ThemeMode.light;
+  late final AppRouter _appRouter;
+
+  @override
+  void initState() {
+    super.initState();
+    _appRouter = AppRouter(
+      context.read<AuthBloc>(),
+      onThemeChanged: toggleTheme,
+    );
+  }
 
   void toggleTheme(ThemeMode mode) {
     setState(() {
@@ -46,12 +56,6 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    final authBloc = context.read<AuthBloc>();
-    final appRouter = AppRouter(
-      authBloc,
-      onThemeChanged: toggleTheme,
-      themeMode: _themeMode,
-    );
 
     return MultiBlocProvider(
       providers: [
@@ -67,7 +71,8 @@ class _MainAppState extends State<MainApp> {
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
-        routerConfig: appRouter.config,
+        routerConfig: _appRouter.config,
+        themeMode: _themeMode,
         theme: ThemeData(
           useMaterial3: true,
           primaryColor: AppColor.primary,
@@ -116,6 +121,63 @@ class _MainAppState extends State<MainApp> {
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: const BorderSide(color: AppColor.borderLight),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: AppColor.primary, width: 2),
+            ),
+          ),
+        ),
+        darkTheme: ThemeData(
+          useMaterial3: true,
+          brightness: Brightness.dark,
+          primaryColor: AppColor.primary,
+          scaffoldBackgroundColor: const Color(0xFF121212),
+          colorScheme: ColorScheme.fromSeed(
+            brightness: Brightness.dark,
+            seedColor: AppColor.primary,
+            primary: AppColor.primary,
+            onPrimary: AppColor.textInverse,
+            surface: const Color(0xFF1E1E1E),
+            onSurface: Colors.white,
+            error: AppColor.errorText,
+            onError: AppColor.textInverse,
+          ),
+          textTheme: const TextTheme(
+            bodyLarge: TextStyle(color: Colors.white),
+            bodyMedium: TextStyle(color: Colors.white70),
+            bodySmall: TextStyle(color: Colors.white60),
+            titleLarge: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xFF1E1E1E),
+            foregroundColor: Colors.white,
+            elevation: 0,
+            iconTheme: IconThemeData(color: Colors.white),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColor.primary,
+              foregroundColor: AppColor.textInverse,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+          inputDecorationTheme: InputDecorationTheme(
+            fillColor: const Color(0xFF2C2C2C),
+            filled: true,
+            hintStyle: const TextStyle(color: Colors.white60),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Colors.white24),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Colors.white24),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),

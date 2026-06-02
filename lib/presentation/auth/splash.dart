@@ -6,12 +6,12 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: AppColor.primary,
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: Center(
         child: Text(
           'ELECTUS',
-          style: TextStyle(color: AppColor.surface, fontSize: 32),
+          style: TextStyle(color: Theme.of(context).colorScheme.surface, fontSize: 32),
         ),
       ),
     );

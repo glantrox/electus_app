@@ -28,7 +28,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
           _isObscured
               ? Icons.visibility_outlined
               : Icons.visibility_off_outlined,
-          color: AppColor.textSecondary,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
         onPressed: () {
           setState(() {

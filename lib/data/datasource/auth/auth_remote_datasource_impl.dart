@@ -50,10 +50,9 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
 
   @override
   Future<bool> validateToken(String token) async {
-    // Note: Endpoint missing from swagger docs.
-    // Assuming /auth/validate based on method name.
+    // Note: Using /user/profile to validate token since /auth/validate does not exist
     final response = await client.get(
-      Uri.parse('$baseUrl/auth/validate'),
+      Uri.parse('$baseUrl/user/profile'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -63,7 +62,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     if (response.statusCode == 200) {
       return true;
     } else {
-      throw Exception('Token invalid: ${response.body}');
+      return false;
     }
   }
 }

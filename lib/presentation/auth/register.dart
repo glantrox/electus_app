@@ -47,7 +47,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: MultiBlocListener(
           listeners: [
@@ -66,7 +66,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(state.message),
-                      backgroundColor: AppColor.errorText,
+                      backgroundColor: Theme.of(context).colorScheme.error,
                     ),
                   );
                 }
@@ -75,7 +75,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ],
           child: Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
+              padding: EdgeInsets.symmetric(
                 horizontal: 24.0,
                 vertical: 32.0,
               ),
@@ -83,7 +83,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const _AuthHeader(),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32),
                   _RegisterFormCard(
                     formKey: _formKey,
                     nameController: _nameController,
@@ -92,7 +92,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     onSubmit: _handleRegister,
                     isLoading: context.watch<RegisterBloc>().state is LoadingRS,
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32),
                   const _AuthFooter(),
                 ],
               ),
@@ -116,15 +116,15 @@ class _AuthHeader extends StatelessWidget {
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: AppColor.textPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
             letterSpacing: -0.5,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         Text(
           'Join the next generation of hiring for growing teams.',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16, color: AppColor.textSecondary),
+          style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
       ],
     );
@@ -151,12 +151,11 @@ class _RegisterFormCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24.0),
+      padding: EdgeInsets.all(24.0),
       decoration: BoxDecoration(
-        color: AppColor
-            .surface, // Adjust if your card has a slightly different tint
+        color: Theme.of(context).colorScheme.surface, // Adjust if your card has a slightly different tint
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColor.borderLight),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.02),
@@ -177,7 +176,7 @@ class _RegisterFormCard extends StatelessWidget {
               keyboardType: TextInputType.name,
               textInputAction: TextInputAction.next,
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             AuthTextField(
               label: 'Work Email',
               hintText: 'name@company.com',
@@ -185,15 +184,15 @@ class _RegisterFormCard extends StatelessWidget {
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             PasswordTextField(controller: passwordController),
-            const SizedBox(height: 32),
+            SizedBox(height: 32),
             ElevatedButton(
               onPressed: !isLoading ? onSubmit : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColor.primary,
-                foregroundColor: AppColor.textInverse,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                padding: EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -231,14 +230,14 @@ class _AuthFooter extends StatelessWidget {
       children: [
         Text(
           'Already have an account? ',
-          style: TextStyle(color: AppColor.textSecondary),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
         GestureDetector(
           onTap: () => context.go('/login'),
           child: Text(
             'Log In',
             style: TextStyle(
-              color: AppColor.primary,
+              color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.bold,
             ),
           ),

@@ -36,12 +36,12 @@ class StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColor.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: AppColor.borderLight,
+          color: Theme.of(context).colorScheme.outlineVariant,
         ),
         boxShadow: [
           BoxShadow(
@@ -55,37 +55,37 @@ class StatCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: iconBgColor,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: iconColor, size: 24),
           ),
-          const Spacer(),
+          Spacer(),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: AppColor.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               letterSpacing: 0.5,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: 4),
           Text(
             count,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: AppColor.textPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
               letterSpacing: -1,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           if (tagText != null)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: tagBgColor,
                 borderRadius: BorderRadius.circular(20),
@@ -95,7 +95,7 @@ class StatCard extends StatelessWidget {
                 children: [
                   if (tagIcon != null) ...[
                     Icon(tagIcon, size: 12, color: tagColor),
-                    const SizedBox(width: 4),
+                    SizedBox(width: 4),
                   ],
                   Flexible(
                     child: Text(
@@ -121,14 +121,14 @@ class StatCard extends StatelessWidget {
               ),
             ),
           if (showProgressBar) ...[
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             ClipRRect(
               borderRadius: BorderRadius.circular(2),
               child: LinearProgressIndicator(
                 value: 0.65,
                 backgroundColor: const Color(0xFFF3F4F6),
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  progressColor ?? AppColor.primary,
+                  progressColor ?? Theme.of(context).colorScheme.primary,
                 ),
                 minHeight: 4,
               ),

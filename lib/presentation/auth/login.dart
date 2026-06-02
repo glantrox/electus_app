@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         // Add MultiBlocListener to handle both flows
         child: MultiBlocListener(
@@ -64,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(state.message),
-                      backgroundColor: AppColor.errorText,
+                      backgroundColor: Theme.of(context).colorScheme.error,
                     ),
                   );
                 }
@@ -73,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ],
           child: Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
+              padding: EdgeInsets.symmetric(
                 horizontal: 24.0,
                 vertical: 32.0,
               ),
@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const _LoginHeader(),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32),
                   _LoginFormCard(
                     formKey: _formKey,
                     emailController: _emailController,
@@ -94,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Use context.watch to trigger rebuilds
                     isLoading: context.watch<LoginBloc>().state is LoadingLS,
                   ),
-                  const SizedBox(height: 32),
+                  SizedBox(height: 32),
                   const _LoginFooter(),
                 ],
               ),
@@ -118,15 +118,15 @@ class _LoginHeader extends StatelessWidget {
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: AppColor.textPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
             letterSpacing: -0.5,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         Text(
           'The hiring workspace for high-growth teams.',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16, color: AppColor.textSecondary),
+          style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
       ],
     );
@@ -155,11 +155,11 @@ class _LoginFormCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24.0),
+      padding: EdgeInsets.all(24.0),
       decoration: BoxDecoration(
-        color: AppColor.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColor.borderLight),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.02),
@@ -179,12 +179,12 @@ class _LoginFormCard extends StatelessWidget {
               controller: emailController,
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
-              prefixIcon: const Icon(
+              prefixIcon: Icon(
                 Icons.mail_outline,
-                color: AppColor.textSecondary,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             AuthTextField(
               label: 'Password',
               hintText: '••••••••',
@@ -192,16 +192,16 @@ class _LoginFormCard extends StatelessWidget {
               obscureText: isPasswordObscured,
               keyboardType: TextInputType.visiblePassword,
               textInputAction: TextInputAction.done,
-              prefixIcon: const Icon(
+              prefixIcon: Icon(
                 Icons.lock_outline,
-                color: AppColor.textSecondary,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               suffixIcon: IconButton(
                 icon: Icon(
                   isPasswordObscured
                       ? Icons.visibility_outlined
                       : Icons.visibility_off_outlined,
-                  color: AppColor.textSecondary,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 onPressed: onTogglePassword,
               ),
@@ -215,18 +215,18 @@ class _LoginFormCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: AppColor.primary,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 32),
+            SizedBox(height: 32),
             ElevatedButton(
               onPressed: !isLoading ? onSubmit : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColor.primary,
-                foregroundColor: AppColor.textInverse,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                padding: EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -266,14 +266,14 @@ class _LoginFooter extends StatelessWidget {
       children: [
         Text(
           'Don\'t have an account? ',
-          style: TextStyle(color: AppColor.textSecondary),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
         GestureDetector(
           onTap: () => context.go('/register'),
           child: Text(
             'Sign Up',
             style: TextStyle(
-              color: AppColor.primary,
+              color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.bold,
             ),
           ),

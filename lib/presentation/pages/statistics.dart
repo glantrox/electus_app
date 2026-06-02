@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:electus_app/presentation/bloc/analytics/analytics_bloc.dart';
 import 'package:electus_app/presentation/bloc/analytics/analytics_state.dart';
+import 'package:electus_app/presentation/components/common/skeleton/stat_card_skeleton.dart';
+import 'package:electus_app/presentation/components/common/skeleton/shimmer_skeleton.dart';
+import 'package:electus_app/presentation/components/common/skeleton/skeleton_card.dart';
 import 'package:electus_app/presentation/bloc/profile/profile_bloc.dart';
 import 'package:electus_app/presentation/bloc/profile/profile_state.dart';
 
@@ -13,13 +16,13 @@ class StatisticsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               _DashboardHeader(),
               SizedBox(height: 32),
               _TitleSection(),
@@ -59,17 +62,17 @@ class _DashboardHeader extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               name,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: AppColor.textPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const Spacer(),
             IconButton(
               onPressed: () => context.push('/notification'),
-              icon: const Icon(Icons.notifications_none_outlined),
-              color: AppColor.primary,
+              icon: Icon(Icons.notifications_none_outlined),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ],
         );
@@ -85,20 +88,20 @@ class _TitleSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
+      children: [
         Text(
           'Analytics Overview',
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
-            color: AppColor.textPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
             letterSpacing: -0.5,
           ),
         ),
         SizedBox(height: 8),
         Text(
           'Key metrics for your hiring pipeline.',
-          style: TextStyle(fontSize: 16, color: AppColor.textSecondary),
+          style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
       ],
     );
@@ -113,9 +116,27 @@ class _MetricsGrid extends StatelessWidget {
     return BlocBuilder<AnalyticsBloc, AnalyticsState>(
       builder: (context, state) {
         if (state is AnalyticsLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(child: StatCardSkeleton()),
+                  SizedBox(width: 16),
+                  Expanded(child: StatCardSkeleton()),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(child: StatCardSkeleton()),
+                  SizedBox(width: 16),
+                  Expanded(child: StatCardSkeleton()),
+                ],
+              ),
+            ],
+          );
         } else if (state is AnalyticsError) {
-          return Center(child: Text(state.message, style: const TextStyle(color: Colors.red)));
+          return Center(child: Text(state.message, style: TextStyle(color: Colors.red)));
         } else if (state is AnalyticsLoaded) {
           final overview = state.overview;
 
@@ -130,7 +151,7 @@ class _MetricsGrid extends StatelessWidget {
                       mainValue: overview.totalApplicants.value.toString(),
                       trendText: overview.totalApplicants.trend,
                       trendIcon: overview.totalApplicants.isPositiveTrend == true ? Icons.trending_up : Icons.trending_down,
-                      trendColor: overview.totalApplicants.isPositiveTrend == true ? AppColor.primary : Colors.red,
+                      trendColor: overview.totalApplicants.isPositiveTrend == true ? Theme.of(context).colorScheme.primary : Colors.red,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -143,7 +164,7 @@ class _MetricsGrid extends StatelessWidget {
                       hasUnderline: true,
                       trendText: overview.timeToHire.trend,
                       trendIcon: overview.timeToHire.isPositiveTrend == true ? Icons.trending_down : Icons.trending_up, // lower time to hire is better
-                      trendColor: AppColor.primary,
+                      trendColor: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ],
@@ -158,7 +179,7 @@ class _MetricsGrid extends StatelessWidget {
                       mainValue: '${overview.offerAcceptance.value}${overview.offerAcceptance.unit ?? ''}',
                       trendText: overview.offerAcceptance.trend,
                       trendIcon: Icons.horizontal_rule,
-                      trendColor: AppColor.textSecondary,
+                      trendColor: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -169,7 +190,7 @@ class _MetricsGrid extends StatelessWidget {
                       mainValue: overview.activeRoles.value.toString(),
                       trendText: overview.activeRoles.trend,
                       trendIcon: Icons.info_outline,
-                      trendColor: AppColor.textSecondary,
+                      trendColor: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -209,7 +230,7 @@ class _MetricCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColor.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -224,14 +245,14 @@ class _MetricCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 20, color: AppColor.textSecondary),
+              Icon(icon, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: AppColor.textSecondary,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -248,9 +269,9 @@ class _MetricCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: AppColor.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                   decoration: hasUnderline ? TextDecoration.underline : TextDecoration.none,
-                  decorationColor: AppColor.primary.withValues(alpha: 0.3),
+                  decorationColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                   decorationThickness: 2,
                 ),
               ),
@@ -259,9 +280,9 @@ class _MetricCard extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 4, left: 2),
                   child: Text(
                     suffixValue,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
-                      color: AppColor.textSecondary,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -299,18 +320,56 @@ class _PipelineSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AnalyticsBloc, AnalyticsState>(
       builder: (context, state) {
-        if (state is AnalyticsLoaded) {
+        if (state is AnalyticsLoading) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Hiring Pipeline',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 24),
+              ShimmerSkeleton(
+                child: Column(
+                  children: List.generate(3, (index) => Padding(
+                    padding: const EdgeInsets.only(bottom: 24.0),
+                    child: Row(
+                      children: [
+                        const SkeletonBox(width: 16, height: 16, borderRadius: 8),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SkeletonBox(width: 100, height: 16),
+                              SizedBox(height: 12),
+                              SkeletonBox(width: double.infinity, height: 8),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )),
+                ),
+              ),
+            ],
+          );
+        } else if (state is AnalyticsLoaded) {
           final pipeline = state.pipeline;
           
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Hiring Pipeline',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: AppColor.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 24),
@@ -381,7 +440,7 @@ class _PipelineStage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: color,
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColor.surface, width: 2),
+                    border: Border.all(color: Theme.of(context).colorScheme.surface, width: 2),
                     boxShadow: [
                       BoxShadow(
                         color: color.withValues(alpha: 0.4),
@@ -413,18 +472,18 @@ class _PipelineStage extends StatelessWidget {
                     children: [
                       Text(
                         label,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: AppColor.textPrimary,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       Text(
                         count.toString(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: AppColor.textPrimary,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ],
@@ -435,7 +494,7 @@ class _PipelineStage extends StatelessWidget {
                       Container(
                         height: 8,
                         decoration: BoxDecoration(
-                          color: AppColor.background,
+                          color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -454,9 +513,9 @@ class _PipelineStage extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     '${(percentage * 100).toInt()}% of applied',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
-                      color: AppColor.textSecondary,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

@@ -17,64 +17,72 @@ class MainDashboardLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: navigationShell,
-      extendBody: true, // Allow body content to flow under the floating nav
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 9),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          decoration: BoxDecoration(
-            color: AppColor.bottomNavSurface,
-            borderRadius: BorderRadius.circular(40),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+      body: Stack(
+        children: [
+          navigationShell,
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: SafeArea(
+              child: Container(
+                margin: const EdgeInsets.fromLTRB(16, 0, 16, 9),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(40),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _NavItem(
+                      icon: Icons.home_outlined,
+                      activeIcon: Icons.home,
+                      label: 'Home',
+                      isSelected: navigationShell.currentIndex == 0,
+                      onTap: () => _onTap(0),
+                    ),
+                    _NavItem(
+                      icon: Icons.cloud_upload_outlined,
+                      activeIcon: Icons.cloud_upload,
+                      label: 'Upload',
+                      isSelected: navigationShell.currentIndex == 1,
+                      onTap: () => _onTap(1),
+                    ),
+                    _NavItem(
+                      icon: Icons.camera_alt_outlined,
+                      activeIcon: Icons.camera_alt,
+                      label: 'Scan',
+                      isSelected: false,
+                      onTap: () => context.push('/scan_cv'),
+                    ),
+                    _NavItem(
+                      icon: Icons.bar_chart_outlined,
+                      activeIcon: Icons.bar_chart,
+                      label: 'Stats',
+                      isSelected: navigationShell.currentIndex == 2,
+                      onTap: () => _onTap(2),
+                    ),
+                    _NavItem(
+                      icon: Icons.person_outline,
+                      activeIcon: Icons.person,
+                      label: 'Account',
+                      isSelected: navigationShell.currentIndex == 3,
+                      onTap: () => _onTap(3),
+                    ),
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _NavItem(
-                icon: Icons.home_outlined,
-                activeIcon: Icons.home,
-                label: 'Home',
-                isSelected: navigationShell.currentIndex == 0,
-                onTap: () => _onTap(0),
-              ),
-              _NavItem(
-                icon: Icons.cloud_upload_outlined,
-                activeIcon: Icons.cloud_upload,
-                label: 'Upload',
-                isSelected: navigationShell.currentIndex == 1,
-                onTap: () => _onTap(1),
-              ),
-              _NavItem(
-                icon: Icons.camera_alt_outlined,
-                activeIcon: Icons.camera_alt,
-                label: 'Scan',
-                isSelected: false,
-                onTap: () => context.push('/scan_cv'),
-              ),
-              _NavItem(
-                icon: Icons.bar_chart_outlined,
-                activeIcon: Icons.bar_chart,
-                label: 'Stats',
-                isSelected: navigationShell.currentIndex == 2,
-                onTap: () => _onTap(2),
-              ),
-              _NavItem(
-                icon: Icons.person_outline,
-                activeIcon: Icons.person,
-                label: 'Account',
-                isSelected: navigationShell.currentIndex == 3,
-                onTap: () => _onTap(3),
-              ),
-            ],
-          ),
-        ),
+        ],
       ),
     );
   }
@@ -105,7 +113,7 @@ class _NavItem extends StatelessWidget {
         curve: Curves.easeInOut,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? AppColor.primary : Colors.transparent,
+          color: isSelected ? Theme.of(context).colorScheme.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(30),
         ),
         child: Column(
@@ -113,14 +121,14 @@ class _NavItem extends StatelessWidget {
           children: [
             Icon(
               isSelected ? activeIcon : icon,
-              color: isSelected ? AppColor.textInverse : AppColor.textPrimary,
+              color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
               size: 24,
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? AppColor.textInverse : AppColor.textPrimary,
+                color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),

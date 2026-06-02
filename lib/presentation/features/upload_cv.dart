@@ -13,13 +13,13 @@ class UploadCvScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: EdgeInsets.all(24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               _HeaderSection(),
               SizedBox(height: 32),
               _DropzoneCard(),
@@ -41,21 +41,21 @@ class _HeaderSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Upload Candidate CVs',
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
-            color: AppColor.textPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
             letterSpacing: -0.5,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         Text(
           'Drag and drop resumes here to automatically parse and add candidates to your talent pool. Supports PDF, DOCX, and TXT files.',
           style: TextStyle(
             fontSize: 16,
-            color: AppColor.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             height: 1.5,
           ),
         ),
@@ -71,15 +71,14 @@ class _DropzoneCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+      padding: EdgeInsets.symmetric(vertical: 40, horizontal: 24),
       decoration: BoxDecoration(
-        color: AppColor
-            .surface, // The image shows a very soft gradient/shadow, surface works best for performance
+        color: Theme.of(context).colorScheme.surface, // The image shows a very soft gradient/shadow, surface works best for performance
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColor.borderLight.withValues(alpha: 0.5)),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
-            color: AppColor.primary.withValues(alpha: 0.05),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
             blurRadius: 40,
             spreadRadius: 0,
             offset: const Offset(0, 10),
@@ -89,32 +88,32 @@ class _DropzoneCard extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColor.iconTealBg,
+              color: Theme.of(context).colorScheme.primaryContainer,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.note_add_outlined,
-              color: AppColor.iconTeal,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
               size: 32,
             ),
           ),
-          const SizedBox(height: 24),
-          const Text(
+          SizedBox(height: 24),
+          Text(
             'Drop your files here',
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: AppColor.textPrimary,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          SizedBox(height: 8),
+          Text(
             'or select files from your storage',
-            style: TextStyle(color: AppColor.textSecondary, fontSize: 15),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 15),
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           SizedBox(
             width: double.infinity,
             child: BlocConsumer<CandidateActionBloc, CandidateActionState>(
@@ -147,16 +146,16 @@ class _DropzoneCard extends StatelessWidget {
                           }
                         },
                   icon: isLoading
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 16,
                           height: 16,
                           child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                      : const Icon(Icons.folder_open),
+                      : Icon(Icons.folder_open),
                   label: Text(isLoading ? 'Uploading...' : 'Browse Files'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.primary,
-                    foregroundColor: AppColor.textInverse,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    padding: EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -166,30 +165,30 @@ class _DropzoneCard extends StatelessWidget {
               },
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: () {
                 // Implement camera scanner
               },
-              icon: const Icon(Icons.camera_alt_outlined),
-              label: const Text('Scan with Camera'),
+              icon: Icon(Icons.camera_alt_outlined),
+              label: Text('Scan with Camera'),
               style: OutlinedButton.styleFrom(
-                foregroundColor: AppColor.primary,
-                side: const BorderSide(color: AppColor.primary, width: 1.5),
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                foregroundColor: Theme.of(context).colorScheme.primary,
+                side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1.5),
+                padding: EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           Text(
             'Maximum file size: 10MB per document.',
             style: TextStyle(
-              color: AppColor.borderLight,
+              color: Theme.of(context).colorScheme.outlineVariant,
               fontSize: 13,
             ), // Extremely light text as per design
           ),
@@ -208,27 +207,27 @@ class _RecentUploadsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          children: const [
-            Icon(Icons.pie_chart_outline, color: AppColor.primary, size: 24),
+          children: [
+            Icon(Icons.pie_chart_outline, color: Theme.of(context).colorScheme.primary, size: 24),
             SizedBox(width: 8),
             Text(
               'Recent Uploads',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: AppColor.textPrimary,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: 16),
         // Hardcoded for UI mapping. In production, this maps over a list of File models.
         const _FileStatusTile(
           fileName: 'j_smith_marketing_portfolio.docx',
           fileSize: '1.1 MB',
           status: FileUploadStatus.success,
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: 12),
         const _FileStatusTile(
           fileName: 'corrupted_file_001.pdf',
           errorMessage: 'Failed to parse document format.',
@@ -259,34 +258,34 @@ class _FileStatusTile extends StatelessWidget {
     final isError = status == FileUploadStatus.error;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isError
-            ? AppColor.errorBackground.withValues(alpha: 0.5)
-            : AppColor.surface,
+            ? Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.5)
+            : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isError ? AppColor.errorBackground : AppColor.borderLight,
+          color: isError ? Theme.of(context).colorScheme.errorContainer : Theme.of(context).colorScheme.outlineVariant,
         ),
       ),
       child: Row(
         children: [
           // Leading Icon
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: isError
-                  ? AppColor.errorBackground
-                  : AppColor.successBackground,
+                  ? Theme.of(context).colorScheme.errorContainer
+                  : const Color(0xFFEAF5F2),
               shape: BoxShape.circle,
             ),
             child: Icon(
               isError ? Icons.error_outline : Icons.check_circle,
-              color: isError ? AppColor.errorIcon : AppColor.successText,
+              color: isError ? Theme.of(context).colorScheme.error : const Color(0xFF317566),
               size: 24,
             ),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16),
 
           // Middle Content (Filename & Subtitle)
           Expanded(
@@ -297,7 +296,7 @@ class _FileStatusTile extends StatelessWidget {
                   fileName,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: AppColor.textPrimary,
+                    color: Theme.of(context).colorScheme.onSurface,
                     decoration: isError
                         ? TextDecoration.lineThrough
                         : null, // Noticed this detail in your design
@@ -305,7 +304,7 @@ class _FileStatusTile extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   isError
                       ? (errorMessage ?? 'Upload failed')
@@ -313,19 +312,19 @@ class _FileStatusTile extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13,
                     color: isError
-                        ? AppColor.errorText
-                        : AppColor.textSecondary,
+                        ? Theme.of(context).colorScheme.error
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16),
 
           // Trailing Action
           if (isError)
             IconButton(
-              icon: const Icon(Icons.refresh, color: AppColor.textSecondary),
+              icon: Icon(Icons.refresh, color: Theme.of(context).colorScheme.onSurfaceVariant),
               onPressed: () {
                 // Retry logic
               },
@@ -337,18 +336,18 @@ class _FileStatusTile extends StatelessWidget {
               },
               child: Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Text(
                     'View\nProfile',
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      color: AppColor.primary,
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   SizedBox(width: 4),
-                  Icon(Icons.arrow_forward, color: AppColor.primary, size: 16),
+                  Icon(Icons.arrow_forward, color: Theme.of(context).colorScheme.primary, size: 16),
                 ],
               ),
             ),

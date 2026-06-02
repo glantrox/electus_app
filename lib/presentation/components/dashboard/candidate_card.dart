@@ -10,7 +10,7 @@ class CandidateCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColor.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFE5E7EB)),
         boxShadow: [
@@ -27,7 +27,7 @@ class CandidateCard extends StatelessWidget {
           children: [
             Container(
               width: 6,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Color(0xFF3B82F6),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(15),
@@ -37,7 +37,7 @@ class CandidateCard extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -46,61 +46,61 @@ class CandidateCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             candidate.fullName.isNotEmpty ? candidate.fullName : 'Anonymous Candidate',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: AppColor.textPrimary,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        const Icon(
+                        SizedBox(width: 8),
+                        Icon(
                           Icons.open_in_new,
                           size: 16,
-                          color: AppColor.textSecondary,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       "${candidate.education} • ${candidate.experience}",
-                      style: const TextStyle(
-                        color: AppColor.textSecondary,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.access_time,
                           size: 14,
-                          color: AppColor.textSecondary,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
-                        const SizedBox(width: 4),
+                        SizedBox(width: 4),
                         Text(
                           candidate.createdAt != null 
                               ? "${candidate.createdAt!.day}/${candidate.createdAt!.month}/${candidate.createdAt!.year}"
                               : "Recent",
-                          style: const TextStyle(
-                            color: AppColor.textSecondary,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontSize: 12,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
                       children: candidate.skills.take(5).map((skill) => SkillTag(label: skill)).toList(),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     Wrap(
                       spacing: 12,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                             horizontal: 10,
                             vertical: 6,
                           ),
@@ -112,17 +112,17 @@ class CandidateCard extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.circle,
                                 size: 8,
                                 color: Color(0xFFDC2626),
                               ),
-                              const SizedBox(width: 6),
+                              SizedBox(width: 6),
                               Text(
                                 candidate.hollandCode?.primary.isNotEmpty == true
                                     ? '${candidate.hollandCode!.primary[0]} - ${candidate.hollandCode!.primary}'
                                     : 'N/A',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Color(0xFF991B1B),
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -132,27 +132,27 @@ class CandidateCard extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(
+                          padding: EdgeInsets.symmetric(
                             horizontal: 10,
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColor.successBackground,
+                            color: const Color(0xFFEAF5F2),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.auto_awesome,
                                 size: 14,
-                                color: AppColor.successText,
+                                color: const Color(0xFF317566),
                               ),
-                              const SizedBox(width: 4),
+                              SizedBox(width: 4),
                               Text(
                                 '${candidate.matchScore.toInt()}% Match',
-                                style: const TextStyle(
-                                  color: AppColor.successText,
+                                style: TextStyle(
+                                  color: const Color(0xFF317566),
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -162,45 +162,45 @@ class CandidateCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    const Divider(color: Color(0xFFE5E7EB)),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
+                    Divider(color: Color(0xFFE5E7EB)),
+                    SizedBox(height: 16),
                     Row(
                       children: [
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () {},
                             style: OutlinedButton.styleFrom(
-                              foregroundColor: AppColor.primary,
-                              side: const BorderSide(color: AppColor.primary),
+                              foregroundColor: Theme.of(context).colorScheme.primary,
+                              side: BorderSide(color: Theme.of(context).colorScheme.primary),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              padding: EdgeInsets.symmetric(vertical: 12),
                             ),
-                            child: const Text(
+                            child: Text(
                               'View Profile',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        SizedBox(width: 16),
                         Expanded(
                           child: TextButton.icon(
                             onPressed: () {},
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.done_all,
-                              color: AppColor.textSecondary,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
-                            label: const Text(
+                            label: Text(
                               'Mark Done',
                               style: TextStyle(
-                                color: AppColor.textSecondary,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              padding: EdgeInsets.symmetric(vertical: 12),
                             ),
                           ),
                         ),
@@ -224,7 +224,7 @@ class SkillTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: const Color(0xFFF3F4F6),
         borderRadius: BorderRadius.circular(8),
@@ -232,9 +232,9 @@ class SkillTag extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 12,
-          color: AppColor.textPrimary,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w500,
         ),
       ),

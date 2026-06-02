@@ -128,25 +128,25 @@ class _ScanCvScreenState extends State<ScanCvScreen> {
         appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: EdgeInsets.all(24.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.error_outline,
                   color: Colors.redAccent,
                   size: 48,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   _cameraError!,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                  style: TextStyle(color: Colors.white, fontSize: 16),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: _pickFromGallery,
-                  child: const Text('Pick from Gallery Instead'),
+                  child: Text('Pick from Gallery Instead'),
                 ),
               ],
             ),
@@ -156,9 +156,9 @@ class _ScanCvScreenState extends State<ScanCvScreen> {
     }
 
     if (!_isCameraInitialized || _cameraController == null) {
-      return const Scaffold(
+      return Scaffold(
         backgroundColor: Colors.black,
-        body: Center(child: CircularProgressIndicator(color: AppColor.primary)),
+        body: Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary)),
       );
     }
 
@@ -195,7 +195,7 @@ class _ScanCvScreenState extends State<ScanCvScreen> {
             CameraPreview(_cameraController!),
 
             // 2. Bottom Gradient Overlay for icon visibility
-            const Positioned(
+            Positioned(
               bottom: 0,
               left: 0,
               right: 0,
@@ -286,7 +286,7 @@ class _GlassButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.15),
           shape: BoxShape.circle,
@@ -312,13 +312,13 @@ class _CaptureButton extends StatelessWidget {
         width: 80,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: AppColor.primary, width: 3),
+          border: Border.all(color: Theme.of(context).colorScheme.primary, width: 3),
         ),
         child: Center(
           child: Container(
             height: 66,
             width: 66,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
             ),
