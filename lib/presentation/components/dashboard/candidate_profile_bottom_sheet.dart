@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:electus_app/domain/entities/candidate_entity.dart';
+import 'package:electus_app/presentation/bloc/profile/profile_bloc.dart';
+import 'package:electus_app/presentation/bloc/profile/profile_state.dart';
+import 'package:electus_app/presentation/components/dashboard/riasec_donut_chart.dart';
 
 class CandidateProfileBottomSheet extends StatelessWidget {
   final CandidateEntity candidate;
@@ -10,6 +14,7 @@ class CandidateProfileBottomSheet extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -21,7 +26,9 @@ class CandidateProfileBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final name = candidate.fullName.isNotEmpty ? candidate.fullName : 'Anonymous Candidate';
+    final name = candidate.fullName.isNotEmpty
+        ? candidate.fullName
+        : 'Anonymous Candidate';
     final subtitle = [
       if (candidate.education.isNotEmpty) candidate.education,
       if (candidate.experience.isNotEmpty) candidate.experience,
@@ -42,7 +49,10 @@ class CandidateProfileBottomSheet extends StatelessWidget {
                   CircleAvatar(
                     radius: 24,
                     backgroundColor: const Color(0xFFDCEBFF),
-                    child: Icon(Icons.person_outline, color: colorScheme.primary),
+                    child: Icon(
+                      Icons.person_outline,
+                      color: colorScheme.primary,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -77,17 +87,64 @@ class CandidateProfileBottomSheet extends StatelessWidget {
               ),
             ),
             Divider(color: colorScheme.outlineVariant, height: 1),
-            
-            // AI Summary Section
+
+            // New Content inside ScrollView
             Flexible(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // --- Links Section ---
+                    if (candidate.portfolioUrl.isNotEmpty) ...[
+                      const Text(
+                        'Links',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      InkWell(
+                        onTap: () {
+                          // TODO: Launch URL
+                        },
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.link,
+                              color: colorScheme.primary,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Portfolio / Website',
+                              style: TextStyle(
+                                color: colorScheme.primary,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.open_in_new,
+                              size: 16,
+                              color: colorScheme.primary,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+
+                    // --- AI Summary Section ---
                     Row(
                       children: [
-                        Icon(Icons.auto_awesome, color: colorScheme.primary, size: 20),
+                        Icon(
+                          Icons.auto_awesome,
+                          color: colorScheme.primary,
+                          size: 20,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           'AI Summary',
@@ -101,31 +158,36 @@ class CandidateProfileBottomSheet extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     if (candidate.aiSummary.isNotEmpty)
-                      ...candidate.aiSummary.map((point) => Padding(
-                            padding: const EdgeInsets.only(bottom: 12.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 6, right: 12),
-                                  child: CircleAvatar(
-                                    radius: 4,
-                                    backgroundColor: colorScheme.primary,
+                      ...candidate.aiSummary.map(
+                        (point) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 6,
+                                  right: 12,
+                                ),
+                                child: CircleAvatar(
+                                  radius: 4,
+                                  backgroundColor: colorScheme.primary,
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  point,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: colorScheme.onSurfaceVariant,
+                                    height: 1.5,
                                   ),
                                 ),
-                                Expanded(
-                                  child: Text(
-                                    point,
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      color: colorScheme.onSurfaceVariant,
-                                      height: 1.5,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ))
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
                     else
                       Text(
                         'No summary available.',
@@ -134,13 +196,152 @@ class CandidateProfileBottomSheet extends StatelessWidget {
                           fontStyle: FontStyle.italic,
                         ),
                       ),
+
+                    const SizedBox(height: 24),
+
+                    // --- Holland Code Section ---
+                    if (candidate.hollandCode != null &&
+                        candidate.hollandCode!.distribution != null) ...[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Holland Code\n(RIASEC)',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE6F4F1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.auto_awesome,
+                                  size: 14,
+                                  color: colorScheme.primary,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '${candidate.matchScore.toInt()}% Culture Fit',
+                                  style: TextStyle(
+                                    color: colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 32),
+
+                      RiasecDonutChart(
+                        distribution: candidate.hollandCode!.distribution!,
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // --- Culture Fit Analysis Card ---
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF3F8FF),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFE5E7EB)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'CULTURE FIT ANALYSIS',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF4B5563),
+                                fontSize: 13,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            BlocBuilder<ProfileBloc, ProfileState>(
+                              builder: (context, state) {
+                                Map<String, double> targets = {};
+                                if (state is ProfileLoaded) {
+                                  targets = state.user.riasecTarget;
+                                }
+
+                                return Column(
+                                  children: candidate.hollandCode!.distribution!
+                                      .map((d) {
+                                        final target = targets[d.label] ?? 0;
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: 12.0,
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                d.label,
+                                                style: const TextStyle(
+                                                  fontSize: 15,
+                                                  color: Color(0xFF1F2937),
+                                                ),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    '${d.value.toInt()}%',
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 15,
+                                                      color: Color(0xFF1F2937),
+                                                    ),
+                                                  ),
+                                                  const Text(
+                                                    ' vs ',
+                                                    style: TextStyle(
+                                                      color: Color(0xFF6B7280),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    '${target.toInt()}% Target',
+                                                    style: TextStyle(
+                                                      color:
+                                                          colorScheme.primary,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      })
+                                      .toList(),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
             ),
-            
+
             Divider(color: colorScheme.outlineVariant, height: 1),
-            
+
             // Action Buttons
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
@@ -164,7 +365,10 @@ class CandidateProfileBottomSheet extends StatelessWidget {
                     icon: const Icon(Icons.mail_outline, size: 20),
                     label: const Text(
                       'Send Interview Invite via Email',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -183,7 +387,10 @@ class CandidateProfileBottomSheet extends StatelessWidget {
                     ),
                     child: const Text(
                       'Done Reviewing',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],

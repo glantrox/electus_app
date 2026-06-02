@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:electus_app/core/theme/colors.dart';
 import 'package:go_router/go_router.dart';
 
 class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
