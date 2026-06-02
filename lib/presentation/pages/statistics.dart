@@ -19,7 +19,7 @@ class StatisticsScreen extends StatelessWidget {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -47,18 +47,17 @@ class _DashboardHeader extends StatelessWidget {
       builder: (context, state) {
         String name = 'Loading...';
         String avatarUrl = 'https://i.pravatar.cc/150?img=47';
-        
+
         if (state is ProfileLoaded) {
-          name = state.user.fullName.isNotEmpty ? state.user.fullName : 'Anonymous';
+          name = state.user.fullName.isNotEmpty
+              ? state.user.fullName
+              : 'Anonymous';
           if (state.user.avatarUrl.isNotEmpty) avatarUrl = state.user.avatarUrl;
         }
 
         return Row(
           children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundImage: NetworkImage(avatarUrl),
-            ),
+            CircleAvatar(radius: 20, backgroundImage: NetworkImage(avatarUrl)),
             const SizedBox(width: 12),
             Text(
               name,
@@ -76,7 +75,7 @@ class _DashboardHeader extends StatelessWidget {
             ),
           ],
         );
-      }
+      },
     );
   }
 }
@@ -101,7 +100,10 @@ class _TitleSection extends StatelessWidget {
         SizedBox(height: 8),
         Text(
           'Key metrics for your hiring pipeline.',
-          style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style: TextStyle(
+            fontSize: 16,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );
@@ -136,7 +138,9 @@ class _MetricsGrid extends StatelessWidget {
             ],
           );
         } else if (state is AnalyticsError) {
-          return Center(child: Text(state.message, style: TextStyle(color: Colors.red)));
+          return Center(
+            child: Text(state.message, style: TextStyle(color: Colors.red)),
+          );
         } else if (state is AnalyticsLoaded) {
           final overview = state.overview;
 
@@ -150,8 +154,14 @@ class _MetricsGrid extends StatelessWidget {
                       icon: Icons.people_outline,
                       mainValue: overview.totalApplicants.value.toString(),
                       trendText: overview.totalApplicants.trend,
-                      trendIcon: overview.totalApplicants.isPositiveTrend == true ? Icons.trending_up : Icons.trending_down,
-                      trendColor: overview.totalApplicants.isPositiveTrend == true ? Theme.of(context).colorScheme.primary : Colors.red,
+                      trendIcon:
+                          overview.totalApplicants.isPositiveTrend == true
+                          ? Icons.trending_up
+                          : Icons.trending_down,
+                      trendColor:
+                          overview.totalApplicants.isPositiveTrend == true
+                          ? Theme.of(context).colorScheme.primary
+                          : Colors.red,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -160,10 +170,14 @@ class _MetricsGrid extends StatelessWidget {
                       title: 'Time to Hire',
                       icon: Icons.timer_outlined,
                       mainValue: overview.timeToHire.value.toString(),
-                      suffixValue: overview.timeToHire.unit != null ? ' ${overview.timeToHire.unit}' : '',
+                      suffixValue: overview.timeToHire.unit != null
+                          ? ' ${overview.timeToHire.unit}'
+                          : '',
                       hasUnderline: true,
                       trendText: overview.timeToHire.trend,
-                      trendIcon: overview.timeToHire.isPositiveTrend == true ? Icons.trending_down : Icons.trending_up, // lower time to hire is better
+                      trendIcon: overview.timeToHire.isPositiveTrend == true
+                          ? Icons.trending_down
+                          : Icons.trending_up, // lower time to hire is better
                       trendColor: Theme.of(context).colorScheme.primary,
                     ),
                   ),
@@ -176,10 +190,13 @@ class _MetricsGrid extends StatelessWidget {
                     child: _MetricCard(
                       title: 'Offer Acceptance',
                       icon: Icons.handshake_outlined,
-                      mainValue: '${overview.offerAcceptance.value}${overview.offerAcceptance.unit ?? ''}',
+                      mainValue:
+                          '${overview.offerAcceptance.value}${overview.offerAcceptance.unit ?? ''}',
                       trendText: overview.offerAcceptance.trend,
                       trendIcon: Icons.horizontal_rule,
-                      trendColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                      trendColor: Theme.of(
+                        context,
+                      ).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -190,7 +207,9 @@ class _MetricsGrid extends StatelessWidget {
                       mainValue: overview.activeRoles.value.toString(),
                       trendText: overview.activeRoles.trend,
                       trendIcon: Icons.info_outline,
-                      trendColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                      trendColor: Theme.of(
+                        context,
+                      ).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -199,7 +218,7 @@ class _MetricsGrid extends StatelessWidget {
           );
         }
         return const SizedBox.shrink();
-      }
+      },
     );
   }
 }
@@ -245,7 +264,11 @@ class _MetricCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
+              Icon(
+                icon,
+                size: 20,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -270,8 +293,12 @@ class _MetricCard extends StatelessWidget {
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.onSurface,
-                  decoration: hasUnderline ? TextDecoration.underline : TextDecoration.none,
-                  decorationColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                  decoration: hasUnderline
+                      ? TextDecoration.underline
+                      : TextDecoration.none,
+                  decorationColor: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.3),
                   decorationThickness: 2,
                 ),
               ),
@@ -335,32 +362,39 @@ class _PipelineSection extends StatelessWidget {
               const SizedBox(height: 24),
               ShimmerSkeleton(
                 child: Column(
-                  children: List.generate(3, (index) => Padding(
-                    padding: const EdgeInsets.only(bottom: 24.0),
-                    child: Row(
-                      children: [
-                        const SkeletonBox(width: 16, height: 16, borderRadius: 8),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SkeletonBox(width: 100, height: 16),
-                              SizedBox(height: 12),
-                              SkeletonBox(width: double.infinity, height: 8),
-                            ],
+                  children: List.generate(
+                    3,
+                    (index) => Padding(
+                      padding: const EdgeInsets.only(bottom: 24.0),
+                      child: Row(
+                        children: [
+                          const SkeletonBox(
+                            width: 16,
+                            height: 16,
+                            borderRadius: 8,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SkeletonBox(width: 100, height: 16),
+                                SizedBox(height: 12),
+                                SkeletonBox(width: double.infinity, height: 8),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  )),
+                  ),
                 ),
               ),
             ],
           );
         } else if (state is AnalyticsLoaded) {
           final pipeline = state.pipeline;
-          
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -397,7 +431,7 @@ class _PipelineSection extends StatelessWidget {
           );
         }
         return const SizedBox.shrink();
-      }
+      },
     );
   }
 }
@@ -440,7 +474,10 @@ class _PipelineStage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: color,
                     shape: BoxShape.circle,
-                    border: Border.all(color: Theme.of(context).colorScheme.surface, width: 2),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.surface,
+                      width: 2,
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: color.withValues(alpha: 0.4),
@@ -453,7 +490,9 @@ class _PipelineStage extends StatelessWidget {
                 Expanded(
                   child: Container(
                     width: 2,
-                    color: isLast ? Colors.transparent : const Color(0xFFE5E7EB),
+                    color: isLast
+                        ? Colors.transparent
+                        : const Color(0xFFE5E7EB),
                   ),
                 ),
               ],

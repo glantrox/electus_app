@@ -16,7 +16,7 @@ class UploadCvScreen extends StatelessWidget {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(24.0),
+          padding: const EdgeInsets.fromLTRB(24, 32, 24, 120),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -73,12 +73,20 @@ class _DropzoneCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 40, horizontal: 24),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface, // The image shows a very soft gradient/shadow, surface works best for performance
+        color: Theme.of(context)
+            .colorScheme
+            .surface, // The image shows a very soft gradient/shadow, surface works best for performance
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
+        border: Border.all(
+          color: Theme.of(
+            context,
+          ).colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
+            color: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.05),
             blurRadius: 40,
             spreadRadius: 0,
             offset: const Offset(0, 10),
@@ -111,7 +119,10 @@ class _DropzoneCard extends StatelessWidget {
           SizedBox(height: 8),
           Text(
             'or select files from your storage',
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 15),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 15,
+            ),
           ),
           SizedBox(height: 32),
           SizedBox(
@@ -119,13 +130,13 @@ class _DropzoneCard extends StatelessWidget {
             child: BlocConsumer<CandidateActionBloc, CandidateActionState>(
               listener: (context, state) {
                 if (state is CandidateActionSuccess) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.message)),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.message)));
                 } else if (state is CandidateActionError) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.message)),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.message)));
                 }
               },
               builder: (context, state) {
@@ -138,10 +149,13 @@ class _DropzoneCard extends StatelessWidget {
                             type: FileType.custom,
                             allowedExtensions: ['pdf', 'doc', 'docx', 'txt'],
                           );
-                          if (result != null && result.files.single.path != null) {
+                          if (result != null &&
+                              result.files.single.path != null) {
                             File file = File(result.files.single.path!);
                             if (context.mounted) {
-                              context.read<CandidateActionBloc>().add(UploadCandidateEvent(file));
+                              context.read<CandidateActionBloc>().add(
+                                UploadCandidateEvent(file),
+                              );
                             }
                           }
                         },
@@ -149,7 +163,11 @@ class _DropzoneCard extends StatelessWidget {
                       ? SizedBox(
                           width: 16,
                           height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
                       : Icon(Icons.folder_open),
                   label: Text(isLoading ? 'Uploading...' : 'Browse Files'),
                   style: ElevatedButton.styleFrom(
@@ -176,7 +194,10 @@ class _DropzoneCard extends StatelessWidget {
               label: Text('Scan with Camera'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Theme.of(context).colorScheme.primary,
-                side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1.5),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 1.5,
+                ),
                 padding: EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
@@ -208,7 +229,11 @@ class _RecentUploadsSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(Icons.pie_chart_outline, color: Theme.of(context).colorScheme.primary, size: 24),
+            Icon(
+              Icons.pie_chart_outline,
+              color: Theme.of(context).colorScheme.primary,
+              size: 24,
+            ),
             SizedBox(width: 8),
             Text(
               'Recent Uploads',
@@ -261,11 +286,15 @@ class _FileStatusTile extends StatelessWidget {
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isError
-            ? Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.5)
+            ? Theme.of(
+                context,
+              ).colorScheme.errorContainer.withValues(alpha: 0.5)
             : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isError ? Theme.of(context).colorScheme.errorContainer : Theme.of(context).colorScheme.outlineVariant,
+          color: isError
+              ? Theme.of(context).colorScheme.errorContainer
+              : Theme.of(context).colorScheme.outlineVariant,
         ),
       ),
       child: Row(
@@ -281,7 +310,9 @@ class _FileStatusTile extends StatelessWidget {
             ),
             child: Icon(
               isError ? Icons.error_outline : Icons.check_circle,
-              color: isError ? Theme.of(context).colorScheme.error : const Color(0xFF317566),
+              color: isError
+                  ? Theme.of(context).colorScheme.error
+                  : const Color(0xFF317566),
               size: 24,
             ),
           ),
@@ -324,7 +355,10 @@ class _FileStatusTile extends StatelessWidget {
           // Trailing Action
           if (isError)
             IconButton(
-              icon: Icon(Icons.refresh, color: Theme.of(context).colorScheme.onSurfaceVariant),
+              icon: Icon(
+                Icons.refresh,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               onPressed: () {
                 // Retry logic
               },
@@ -347,7 +381,11 @@ class _FileStatusTile extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 4),
-                  Icon(Icons.arrow_forward, color: Theme.of(context).colorScheme.primary, size: 16),
+                  Icon(
+                    Icons.arrow_forward,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 16,
+                  ),
                 ],
               ),
             ),

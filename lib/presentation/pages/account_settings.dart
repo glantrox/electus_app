@@ -193,10 +193,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
             return Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 40,
-                ),
+                padding: const EdgeInsets.fromLTRB(24, 40, 24, 120),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,

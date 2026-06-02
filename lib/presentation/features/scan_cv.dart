@@ -80,7 +80,9 @@ class _ScanCvScreenState extends State<ScanCvScreen> {
     try {
       final picture = await _cameraController!.takePicture();
       if (mounted) {
-        context.read<CandidateActionBloc>().add(UploadCandidateEvent(File(picture.path)));
+        context.read<CandidateActionBloc>().add(
+          UploadCandidateEvent(File(picture.path)),
+        );
       }
     } catch (e) {
       debugPrint('Capture Error: $e');
@@ -115,7 +117,9 @@ class _ScanCvScreenState extends State<ScanCvScreen> {
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       if (mounted) {
-        context.read<CandidateActionBloc>().add(UploadCandidateEvent(File(image.path)));
+        context.read<CandidateActionBloc>().add(
+          UploadCandidateEvent(File(image.path)),
+        );
       }
     }
   }
@@ -132,11 +136,7 @@ class _ScanCvScreenState extends State<ScanCvScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.error_outline,
-                  color: Colors.redAccent,
-                  size: 48,
-                ),
+                Icon(Icons.error_outline, color: Colors.redAccent, size: 48),
                 SizedBox(height: 16),
                 Text(
                   _cameraError!,
@@ -158,7 +158,11 @@ class _ScanCvScreenState extends State<ScanCvScreen> {
     if (!_isCameraInitialized || _cameraController == null) {
       return Scaffold(
         backgroundColor: Colors.black,
-        body: Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.primary)),
+        body: Center(
+          child: CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
       );
     }
 
@@ -166,74 +170,74 @@ class _ScanCvScreenState extends State<ScanCvScreen> {
     return BlocListener<CandidateActionBloc, CandidateActionState>(
       listener: (context, state) {
         if (state is CandidateActionLoading) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Uploading CV...')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Uploading CV...')));
         } else if (state is CandidateActionSuccess) {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
           if (context.canPop()) {
             context.pop();
           }
         } else if (state is CandidateActionError) {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.message)));
         }
       },
       child: PopScope(
         canPop: true,
         child: Scaffold(
-        backgroundColor: Colors.black,
-        body: Stack(
-          fit: StackFit.expand,
-          children: [
-            // 1. Live Camera Preview
-            CameraPreview(_cameraController!),
+          backgroundColor: Colors.black,
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
+              // 1. Live Camera Preview
+              CameraPreview(_cameraController!),
 
-            // 2. Bottom Gradient Overlay for icon visibility
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: 200,
-              child: _BottomGradient(),
-            ),
-
-            // 3. Top Left Close Button
-            Positioned(
-              top: MediaQuery.of(context).padding.top + 16,
-              left: 16,
-              child: _GlassButton(
-                icon: Icons.close,
-                onTap: () => context.pop(),
+              // 2. Bottom Gradient Overlay for icon visibility
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: 200,
+                child: _BottomGradient(),
               ),
-            ),
 
-            // 4. Bottom Controls Row
-            Positioned(
-              bottom: 48,
-              left: 32,
-              right: 32,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _GlassButton(icon: _getFlashIcon(), onTap: _toggleFlash),
-                  _CaptureButton(onTap: _takePicture),
-                  _GlassButton(
-                    icon: Icons.photo_library_outlined,
-                    onTap: _pickFromGallery,
-                  ),
-                ],
+              // 3. Top Left Close Button
+              Positioned(
+                top: MediaQuery.of(context).padding.top + 16,
+                left: 16,
+                child: _GlassButton(
+                  icon: Icons.close,
+                  onTap: () => context.pop(),
+                ),
               ),
-            ),
-          ],
+
+              // 4. Bottom Controls Row
+              Positioned(
+                bottom: 120,
+                left: 32,
+                right: 32,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _GlassButton(icon: _getFlashIcon(), onTap: _toggleFlash),
+                    _CaptureButton(onTap: _takePicture),
+                    _GlassButton(
+                      icon: Icons.photo_library_outlined,
+                      onTap: _pickFromGallery,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
@@ -290,7 +294,10 @@ class _GlassButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.15),
           shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.3),
+            width: 1,
+          ),
         ),
         child: Icon(icon, color: Colors.white, size: 24),
       ),
@@ -312,7 +319,10 @@ class _CaptureButton extends StatelessWidget {
         width: 80,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: Theme.of(context).colorScheme.primary, width: 3),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.primary,
+            width: 3,
+          ),
         ),
         child: Center(
           child: Container(

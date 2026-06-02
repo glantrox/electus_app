@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:electus_app/core/theme/colors.dart';
+
 import '../components/dashboard/dashboard_header.dart';
 import '../components/dashboard/filter_header.dart';
 import '../components/dashboard/stat_card.dart';
 import '../components/dashboard/candidate_card.dart';
-
-
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:electus_app/presentation/bloc/candidate_list/candidate_list_bloc.dart';
@@ -18,7 +16,6 @@ import 'package:electus_app/presentation/bloc/profile/profile_bloc.dart';
 import 'package:electus_app/presentation/bloc/profile/profile_state.dart';
 import 'package:electus_app/presentation/components/common/skeleton/candidate_card_skeleton.dart';
 import 'package:electus_app/presentation/components/common/skeleton/stat_card_skeleton.dart';
-
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -86,9 +83,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     userName = profileState.user.fullName;
                     avatarUrl = profileState.user.avatarUrl;
                   }
-                  
+
                   if (analyticsState is AnalyticsLoaded) {
-                    totalApplicants = analyticsState.overview.totalApplicants.value.toString();
+                    totalApplicants = analyticsState
+                        .overview
+                        .totalApplicants
+                        .value
+                        .toString();
                   }
 
                   return SliverPersistentHeader(
@@ -109,18 +110,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
           if (!_searchFocusNode.hasFocus)
             SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildOverviewHeader(),
-                  SizedBox(height: 20),
-                  _buildStatCardsGrid(),
-                ],
+              child: Padding(
+                padding: EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildOverviewHeader(),
+                    SizedBox(height: 20),
+                    _buildStatCardsGrid(),
+                  ],
+                ),
               ),
             ),
-          ),
           SliverPersistentHeader(
             pinned: true,
             delegate: FilterHeaderDelegate(),
@@ -159,7 +160,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               },
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 80)),
+          const SliverToBoxAdapter(child: SizedBox(height: 120)),
         ],
       ),
     );
@@ -190,10 +191,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               Text(
                 'See full report',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
               ),
               SizedBox(width: 4),
               Icon(Icons.arrow_forward, size: 16),
@@ -218,13 +216,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: List.generate(4, (index) => StatCardSkeleton()),
           );
         } else if (state is AnalyticsError) {
-          return Center(child: Text('Failed to load metrics', style: TextStyle(color: Colors.red)));
+          return Center(
+            child: Text(
+              'Failed to load metrics',
+              style: TextStyle(color: Colors.red),
+            ),
+          );
         } else if (state is AnalyticsLoaded) {
           final overview = state.overview;
           final pipeline = state.pipeline;
-          
+
           final totalCvs = overview.totalApplicants.value.toString();
-          final pendingReview = (pipeline.applied.count - pipeline.reviewed.count).clamp(0, 9999).toString();
+          final pendingReview =
+              (pipeline.applied.count - pipeline.reviewed.count)
+                  .clamp(0, 9999)
+                  .toString();
           final reviewedCount = pipeline.reviewed.count.toString();
           final interviewingCount = pipeline.interviewed.count.toString();
           final trendText = overview.totalApplicants.trend;
@@ -282,7 +288,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           );
         }
         return SizedBox.shrink();
-      }
+      },
     );
   }
 }
