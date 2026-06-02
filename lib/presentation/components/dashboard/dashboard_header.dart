@@ -63,7 +63,11 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                             children: [
                               CircleAvatar(
                                 radius: 20,
-                                backgroundImage: avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : const NetworkImage('https://i.pravatar.cc/150?img=47'),
+                                backgroundImage: avatarUrl.isNotEmpty
+                                    ? NetworkImage(avatarUrl)
+                                    : const NetworkImage(
+                                        'https://i.pravatar.cc/150?img=47',
+                                      ),
                                 backgroundColor: Colors.white,
                               ),
                               SizedBox(width: 12),
@@ -80,7 +84,9 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                                   Text(
                                     userName,
                                     style: TextStyle(
-                                      color: Theme.of(context).colorScheme.onPrimary,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimary,
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -124,7 +130,9 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                       ),
                       SizedBox(height: 24),
                       Text(
-                        totalApplicants,
+                        totalApplicants == "0"
+                            ? "Nobody"
+                            : "$totalApplicants People",
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: 36,
@@ -134,7 +142,7 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        "Here's your hiring overview for today.",
+                        "Applied to this company.",
                         style: TextStyle(color: Colors.white70, fontSize: 16),
                       ),
                     ],
@@ -165,7 +173,9 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                               padding: EdgeInsets.only(right: 12),
                               child: Icon(
                                 Icons.arrow_back,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                                 size: 20,
                               ),
                             ),
@@ -175,7 +185,9 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                             padding: EdgeInsets.only(right: 12),
                             child: Icon(
                               Icons.search,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                               size: 20,
                             ),
                           ),
@@ -188,7 +200,9 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                               isDense: true,
                               hintText: 'Search candidates, skills...',
                               hintStyle: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                                 fontSize: 14,
                               ),
                               border: InputBorder.none,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:electus_app/core/theme/colors.dart';
 import 'package:electus_app/domain/entities/candidate_entity.dart';
+import 'package:electus_app/presentation/components/dashboard/candidate_profile_bottom_sheet.dart';
 
 class CandidateCard extends StatelessWidget {
   final CandidateEntity candidate;
@@ -169,7 +170,9 @@ class CandidateCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              CandidateProfileBottomSheet.show(context, candidate);
+                            },
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Theme.of(context).colorScheme.primary,
                               side: BorderSide(color: Theme.of(context).colorScheme.primary),

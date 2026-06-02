@@ -12,8 +12,10 @@ import 'package:electus_app/presentation/bloc/candidate_list/candidate_list_even
 import 'package:electus_app/presentation/bloc/candidate_list/candidate_list_state.dart';
 import 'package:electus_app/presentation/bloc/analytics/analytics_bloc.dart';
 import 'package:electus_app/presentation/bloc/analytics/analytics_state.dart';
+import 'package:electus_app/presentation/bloc/analytics/analytics_event.dart';
 import 'package:electus_app/presentation/bloc/profile/profile_bloc.dart';
 import 'package:electus_app/presentation/bloc/profile/profile_state.dart';
+import 'package:electus_app/presentation/bloc/profile/profile_event.dart';
 import 'package:electus_app/presentation/components/common/skeleton/candidate_card_skeleton.dart';
 import 'package:electus_app/presentation/components/common/skeleton/stat_card_skeleton.dart';
 
@@ -28,6 +30,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final FocusNode _searchFocusNode = FocusNode();
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
+  String _selectedFilter = 'All Roles';
 
   @override
   void initState() {
@@ -57,6 +60,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
     context.read<CandidateListBloc>().add(FetchCandidates());
   }
 
+  void _onFilterChanged(String filter) {
+    if (_selectedFilter == filter) return;
+    setState(() {
+      _selectedFilter = filter;
+      _searchController.clear();
+    });
+
+    if (filter == 'All Roles') {
+      context.read<CandidateListBloc>().add(FetchCandidates());
+    } else {
+      context.read<CandidateListBloc>().add(SearchCandidatesEvent(filter));
+    }
+  }
+
+  Future<void> _onRefresh() async {
+    setState(() {
+      _selectedFilter = 'All Roles';
+      _searchController.clear();
+    });
+
+    context.read<CandidateListBloc>().add(FetchCandidates());
+    context.read<AnalyticsBloc>().add(FetchAnalyticsEvent());
+    context.read<ProfileBloc>().add(FetchProfileEvent());
+
+    await Future.delayed(const Duration(milliseconds: 1000));
+  }
+
   @override
   void dispose() {
     _debounce?.cancel();
@@ -69,99 +99,106 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: CustomScrollView(
-        slivers: [
-          BlocBuilder<ProfileBloc, ProfileState>(
-            builder: (context, profileState) {
-              return BlocBuilder<AnalyticsBloc, AnalyticsState>(
-                builder: (context, analyticsState) {
-                  String userName = 'Guest';
-                  String avatarUrl = '';
-                  String totalApplicants = '0';
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        color: Theme.of(context).colorScheme.primary,
+        child: CustomScrollView(
+          slivers: [
+            BlocBuilder<ProfileBloc, ProfileState>(
+              builder: (context, profileState) {
+                return BlocBuilder<AnalyticsBloc, AnalyticsState>(
+                  builder: (context, analyticsState) {
+                    String userName = 'Guest';
+                    String avatarUrl = '';
+                    String totalApplicants = '0';
 
-                  if (profileState is ProfileLoaded) {
-                    userName = profileState.user.fullName;
-                    avatarUrl = profileState.user.avatarUrl;
-                  }
+                    if (profileState is ProfileLoaded) {
+                      userName = profileState.user.fullName;
+                      avatarUrl = profileState.user.avatarUrl;
+                    }
 
-                  if (analyticsState is AnalyticsLoaded) {
-                    totalApplicants = analyticsState
-                        .overview
-                        .totalApplicants
-                        .value
-                        .toString();
-                  }
+                    if (analyticsState is AnalyticsLoaded) {
+                      totalApplicants = analyticsState
+                          .overview
+                          .totalApplicants
+                          .value
+                          .toString();
+                    }
 
-                  return SliverPersistentHeader(
-                    pinned: true,
-                    delegate: DashboardHeaderDelegate(
-                      safeAreaTop: MediaQuery.of(context).padding.top,
-                      userName: userName,
-                      avatarUrl: avatarUrl,
-                      totalApplicants: totalApplicants,
-                      searchFocusNode: _searchFocusNode,
-                      searchController: _searchController,
-                      onBack: _onBack,
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-          if (!_searchFocusNode.hasFocus)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildOverviewHeader(),
-                    SizedBox(height: 20),
-                    _buildStatCardsGrid(),
-                  ],
-                ),
-              ),
-            ),
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: FilterHeaderDelegate(),
-          ),
-          SliverPadding(
-            padding: EdgeInsets.symmetric(horizontal: 24.0),
-            sliver: BlocBuilder<CandidateListBloc, CandidateListState>(
-              builder: (context, state) {
-                if (state is CandidateListLoading) {
-                  return SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      return CandidateCardSkeleton();
-                    }, childCount: 3),
-                  );
-                } else if (state is CandidateListError) {
-                  return SliverToBoxAdapter(
-                    child: Center(child: Text('Error: ${state.message}')),
-                  );
-                } else if (state is CandidateListLoaded) {
-                  final candidates = state.candidates;
-                  if (candidates.isEmpty) {
-                    return const SliverToBoxAdapter(
-                      child: Center(child: Text('No candidates found.')),
+                    return SliverPersistentHeader(
+                      pinned: true,
+                      delegate: DashboardHeaderDelegate(
+                        safeAreaTop: MediaQuery.of(context).padding.top,
+                        userName: userName,
+                        avatarUrl: avatarUrl,
+                        totalApplicants: totalApplicants,
+                        searchFocusNode: _searchFocusNode,
+                        searchController: _searchController,
+                        onBack: _onBack,
+                      ),
                     );
-                  }
-                  return SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: 16.0),
-                        child: CandidateCard(candidate: candidates[index]),
-                      );
-                    }, childCount: candidates.length),
-                  );
-                }
-                return const SliverToBoxAdapter(child: SizedBox.shrink());
+                  },
+                );
               },
             ),
-          ),
-          const SliverToBoxAdapter(child: SizedBox(height: 120)),
-        ],
+            if (!_searchFocusNode.hasFocus)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildOverviewHeader(),
+                      SizedBox(height: 20),
+                      _buildStatCardsGrid(),
+                    ],
+                  ),
+                ),
+              ),
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: FilterHeaderDelegate(
+                selectedFilter: _selectedFilter,
+                onFilterChanged: _onFilterChanged,
+              ),
+            ),
+            SliverPadding(
+              padding: EdgeInsets.symmetric(horizontal: 24.0),
+              sliver: BlocBuilder<CandidateListBloc, CandidateListState>(
+                builder: (context, state) {
+                  if (state is CandidateListLoading) {
+                    return SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        return CandidateCardSkeleton();
+                      }, childCount: 3),
+                    );
+                  } else if (state is CandidateListError) {
+                    return SliverToBoxAdapter(
+                      child: Center(child: Text('Error: ${state.message}')),
+                    );
+                  } else if (state is CandidateListLoaded) {
+                    final candidates = state.candidates;
+                    if (candidates.isEmpty) {
+                      return const SliverToBoxAdapter(
+                        child: Center(child: Text('No candidates found.')),
+                      );
+                    }
+                    return SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 16.0),
+                          child: CandidateCard(candidate: candidates[index]),
+                        );
+                      }, childCount: candidates.length),
+                    );
+                  }
+                  return const SliverToBoxAdapter(child: SizedBox.shrink());
+                },
+              ),
+            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 120)),
+          ],
+        ),
       ),
     );
   }
