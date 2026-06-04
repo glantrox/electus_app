@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dart_either/dart_either.dart';
 import 'package:electus_app/core/error/failure.dart';
 import 'package:electus_app/data/datasource/auth/auth_remote_datasource.dart';
@@ -15,22 +17,37 @@ class AuthRepositoryImpl implements AuthRepository {
   });
 
   @override
-  Future<Either<Failure, AuthEntity>> loginUser(String email, String password) async {
+  Future<Either<Failure, AuthEntity>> loginUser(
+    String email,
+    String password,
+  ) async {
     try {
       final model = await remoteDatasource.loginUser(email, password);
       await localDatasource.cacheToken(model.token);
       return Either.right(model.toEntity());
+    } on SocketException catch (e) {
+      return Either.left(ConnectionFailure(e.message));
     } catch (e) {
       return Either.left(ServerFailure(e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, AuthEntity>> registerUser(String fullName, String email, String password) async {
+  Future<Either<Failure, AuthEntity>> registerUser(
+    String fullName,
+    String email,
+    String password,
+  ) async {
     try {
-      final model = await remoteDatasource.registerUser(fullName, email, password);
+      final model = await remoteDatasource.registerUser(
+        fullName,
+        email,
+        password,
+      );
       await localDatasource.cacheToken(model.token);
       return Either.right(model.toEntity());
+    } on SocketException catch (e) {
+      return Either.left(ConnectionFailure(e.message));
     } catch (e) {
       return Either.left(ServerFailure(e.toString()));
     }
@@ -41,6 +58,8 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final result = await remoteDatasource.validateToken(token);
       return Either.right(result);
+    } on SocketException catch (e) {
+      return Either.left(ConnectionFailure(e.message));
     } catch (e) {
       return Either.left(ServerFailure(e.toString()));
     }

@@ -1,7 +1,7 @@
 import 'package:dart_either/dart_either.dart';
 import 'package:electus_app/core/error/exceptions.dart';
 import 'package:electus_app/core/error/failure.dart';
-import 'package:electus_app/data/datasources/notification/notification_remote_data_source.dart';
+import 'package:electus_app/data/datasource/notification/notification_remote_data_source.dart';
 import 'package:electus_app/domain/entities/notification/notification_entity.dart';
 import 'package:electus_app/domain/repositories/notification/notification_repository.dart';
 

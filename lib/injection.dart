@@ -45,9 +45,8 @@ import 'package:electus_app/domain/usecases/candidates/delete_candidates_by_stat
 import 'package:electus_app/domain/usecases/candidates/invite_candidate_usecase.dart';
 import 'package:electus_app/domain/usecases/candidates/get_culture_fit_usecase.dart';
 
-
 // User Profile
-import 'package:electus_app/data/datasources/user/user_remote_data_source.dart';
+import 'package:electus_app/data/datasource/user/user_remote_data_source.dart';
 import 'package:electus_app/data/repositories/user/user_repository_impl.dart';
 import 'package:electus_app/domain/repositories/user/user_repository.dart';
 import 'package:electus_app/domain/usecases/user/get_user_profile_usecase.dart';
@@ -56,7 +55,7 @@ import 'package:electus_app/domain/usecases/user/update_culture_fit_usecase.dart
 import 'package:electus_app/presentation/bloc/profile/profile_bloc.dart';
 
 // Notifications
-import 'package:electus_app/data/datasources/notification/notification_remote_data_source.dart';
+import 'package:electus_app/data/datasource/notification/notification_remote_data_source.dart';
 import 'package:electus_app/data/repositories/notification/notification_repository_impl.dart';
 import 'package:electus_app/domain/repositories/notification/notification_repository.dart';
 import 'package:electus_app/domain/usecases/notification/get_notifications_usecase.dart';
@@ -65,7 +64,7 @@ import 'package:electus_app/domain/usecases/notification/mark_notification_read_
 import 'package:electus_app/presentation/bloc/notification/notification_bloc.dart';
 
 // Analytics
-import 'package:electus_app/data/datasources/analytics/analytics_remote_data_source.dart';
+import 'package:electus_app/data/datasource/analytics/analytics_remote_data_source.dart';
 import 'package:electus_app/data/repositories/analytics/analytics_repository_impl.dart';
 import 'package:electus_app/domain/repositories/analytics/analytics_repository.dart';
 import 'package:electus_app/domain/usecases/analytics/get_analytics_overview_usecase.dart';
@@ -82,33 +81,43 @@ Future<void> dependencyInjection() async {
 
   // Data sources
   di.registerLazySingleton<AuthLocalDatasource>(
-      () => AuthLocalDatasourceImpl(sharedPreferences: di()));
+    () => AuthLocalDatasourceImpl(sharedPreferences: di()),
+  );
   di.registerLazySingleton<AuthRemoteDatasource>(
-      () => AuthRemoteDatasourceImpl(client: di()));
+    () => AuthRemoteDatasourceImpl(client: di()),
+  );
   di.registerLazySingleton<CandidateDataSource>(
-      () => CandidateDataSourceImpl(client: di(), sharedPreferences: di()));
-
+    () => CandidateDataSourceImpl(client: di(), sharedPreferences: di()),
+  );
 
   di.registerLazySingleton<UserRemoteDataSource>(
-      () => UserRemoteDataSourceImpl(client: di(), sharedPreferences: di()));
+    () => UserRemoteDataSourceImpl(client: di(), sharedPreferences: di()),
+  );
   di.registerLazySingleton<NotificationRemoteDataSource>(
-      () => NotificationRemoteDataSourceImpl(client: di(), sharedPreferences: di()));
+    () =>
+        NotificationRemoteDataSourceImpl(client: di(), sharedPreferences: di()),
+  );
   di.registerLazySingleton<AnalyticsRemoteDataSource>(
-      () => AnalyticsRemoteDataSourceImpl(client: di(), sharedPreferences: di()));
+    () => AnalyticsRemoteDataSourceImpl(client: di(), sharedPreferences: di()),
+  );
 
   // Repositories
   di.registerLazySingleton<AuthRepository>(
-      () => AuthRepositoryImpl(remoteDatasource: di(), localDatasource: di()));
+    () => AuthRepositoryImpl(remoteDatasource: di(), localDatasource: di()),
+  );
   di.registerLazySingleton<CandidateRepository>(
-      () => CandidateRepositoryImpl(remoteDatasource: di()));
-
+    () => CandidateRepositoryImpl(remoteDatasource: di()),
+  );
 
   di.registerLazySingleton<UserRepository>(
-      () => UserRepositoryImpl(remoteDataSource: di()));
+    () => UserRepositoryImpl(remoteDataSource: di()),
+  );
   di.registerLazySingleton<NotificationRepository>(
-      () => NotificationRepositoryImpl(remoteDataSource: di()));
+    () => NotificationRepositoryImpl(remoteDataSource: di()),
+  );
   di.registerLazySingleton<AnalyticsRepository>(
-      () => AnalyticsRepositoryImpl(remoteDataSource: di()));
+    () => AnalyticsRepositoryImpl(remoteDataSource: di()),
+  );
 
   // Use cases (Auth)
   di.registerLazySingleton(() => LoginUserUseCase(di()));
@@ -132,7 +141,6 @@ Future<void> dependencyInjection() async {
   di.registerLazySingleton(() => InviteCandidateUseCase(di()));
   di.registerLazySingleton(() => GetCultureFitUseCase(di()));
 
-
   // Use cases (Profile, Notifs, Analytics)
   di.registerLazySingleton(() => GetUserProfileUseCase(di()));
   di.registerLazySingleton(() => UpdateUserProfileUseCase(di()));
@@ -146,40 +154,47 @@ Future<void> dependencyInjection() async {
   di.registerLazySingleton(() => GetAnalyticsPipelineUseCase(di()));
 
   // BLoCs
-  di.registerFactory(() => AuthBloc(
-        getCachedTokenUseCase: di(),
-        validateTokenUseCase: di(),
-        logoutUserUseCase: di(),
-      ));
+  di.registerFactory(
+    () => AuthBloc(
+      getCachedTokenUseCase: di(),
+      validateTokenUseCase: di(),
+      logoutUserUseCase: di(),
+    ),
+  );
   di.registerFactory(() => LoginBloc(loginUserUseCase: di()));
   di.registerFactory(() => RegisterBloc(registerUserUseCase: di()));
-  di.registerFactory(() => CandidateListBloc(
-        getCandidatesUseCase: di(),
-        searchCandidatesUseCase: di(),
-      ));
-  di.registerFactory(() => CandidateActionBloc(
-        createCandidateUseCase: di(),
-        uploadCandidateUseCase: di(),
-        deleteCandidateUseCase: di(),
-        updateCandidateStatusUseCase: di(),
-        inviteCandidateUseCase: di(),
-        deleteAllCandidatesUseCase: di(),
-        deleteDuplicatesUseCase: di(),
-        deleteCandidatesByStatusUseCase: di(),
-      ));
+  di.registerFactory(
+    () => CandidateListBloc(
+      getCandidatesUseCase: di(),
+      searchCandidatesUseCase: di(),
+    ),
+  );
+  di.registerFactory(
+    () => CandidateActionBloc(
+      createCandidateUseCase: di(),
+      uploadCandidateUseCase: di(),
+      deleteCandidateUseCase: di(),
+      updateCandidateStatusUseCase: di(),
+      inviteCandidateUseCase: di(),
+      deleteAllCandidatesUseCase: di(),
+      deleteDuplicatesUseCase: di(),
+      deleteCandidatesByStatusUseCase: di(),
+    ),
+  );
 
-  di.registerFactory(() => ProfileBloc(
-        getProfile: di(),
-        updateProfile: di(),
-        updateCultureFit: di(),
-      ));
-  di.registerFactory(() => NotificationBloc(
-        getNotifications: di(),
-        markAllRead: di(),
-        markRead: di(),
-      ));
-  di.registerFactory(() => AnalyticsBloc(
-        getOverview: di(),
-        getPipeline: di(),
-      ));
+  di.registerFactory(
+    () => ProfileBloc(
+      getProfile: di(),
+      updateProfile: di(),
+      updateCultureFit: di(),
+    ),
+  );
+  di.registerFactory(
+    () => NotificationBloc(
+      getNotifications: di(),
+      markAllRead: di(),
+      markRead: di(),
+    ),
+  );
+  di.registerFactory(() => AnalyticsBloc(getOverview: di(), getPipeline: di()));
 }

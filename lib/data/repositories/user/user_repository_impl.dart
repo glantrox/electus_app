@@ -2,7 +2,7 @@ import 'package:dart_either/dart_either.dart';
 import 'dart:io';
 import 'package:electus_app/core/error/exceptions.dart';
 import 'package:electus_app/core/error/failure.dart';
-import 'package:electus_app/data/datasources/user/user_remote_data_source.dart';
+import 'package:electus_app/data/datasource/user/user_remote_data_source.dart';
 import 'package:electus_app/domain/entities/user/user_entity.dart';
 import 'package:electus_app/domain/repositories/user/user_repository.dart';
 
@@ -46,7 +46,9 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, Map<String, double>>> updateCultureFit(Map<String, double> riasecTarget) async {
+  Future<Either<Failure, Map<String, double>>> updateCultureFit(
+    Map<String, double> riasecTarget,
+  ) async {
     try {
       final result = await remoteDataSource.updateCultureFit(riasecTarget);
       return Either.right(result);

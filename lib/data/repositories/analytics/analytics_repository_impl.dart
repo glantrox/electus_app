@@ -1,7 +1,7 @@
 import 'package:dart_either/dart_either.dart';
 import 'package:electus_app/core/error/exceptions.dart';
 import 'package:electus_app/core/error/failure.dart';
-import 'package:electus_app/data/datasources/analytics/analytics_remote_data_source.dart';
+import 'package:electus_app/data/datasource/analytics/analytics_remote_data_source.dart';
 import 'package:electus_app/domain/entities/analytics/analytics_entity.dart';
 import 'package:electus_app/domain/repositories/analytics/analytics_repository.dart';
 
@@ -11,7 +11,8 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
   AnalyticsRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, AnalyticsOverviewEntity>> getAnalyticsOverview() async {
+  Future<Either<Failure, AnalyticsOverviewEntity>>
+  getAnalyticsOverview() async {
     try {
       final result = await remoteDataSource.getAnalyticsOverview();
       return Either.right(result);
@@ -23,7 +24,8 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
   }
 
   @override
-  Future<Either<Failure, AnalyticsPipelineEntity>> getAnalyticsPipeline() async {
+  Future<Either<Failure, AnalyticsPipelineEntity>>
+  getAnalyticsPipeline() async {
     try {
       final result = await remoteDataSource.getAnalyticsPipeline();
       return Either.right(result);
