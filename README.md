@@ -1,6 +1,7 @@
 # Electus App
 
-Aplikasi yang dibangun dengan menerapkan arsitektur terstruktur, State Management BLoC, dan navigasi menggunakan GoRouter.
+Aplikasi ini merupakan sisi klien mobile dari Electus Platform (Website), Electus adalah aplikasi Applicant Tracking System yang terintegrasi dengan Artificial Intelligence dalam penerapan ekstraksi konten Curriculum Vitae menjadi segmentasi Holland Code & RIASEC.
+Architecture aplikasi ini dibangun dengan menerapkan arsitektur terstruktur, State Management BLoC, dan navigasi menggunakan GoRouter.
 
 ## Teknologi Utama
 - **Framework:** Flutter
