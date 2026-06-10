@@ -19,7 +19,7 @@ abstract class UserRemoteDataSource {
 class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   final http.Client client;
   final SharedPreferences sharedPreferences;
-  final String baseUrl = 'http://localhost:3000';
+  final String baseUrl = 'http://10.0.2.2:3000';
 
   UserRemoteDataSourceImpl({required this.client, required this.sharedPreferences});
 

@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class CandidateDataSourceImpl implements CandidateDataSource {
   final http.Client client;
-  final String baseUrl = 'http://localhost:3000';
+  final String baseUrl = 'http://10.0.2.2:3000';
 
   final SharedPreferences sharedPreferences;
 
