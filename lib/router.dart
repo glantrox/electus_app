@@ -35,34 +35,16 @@ class AppRouter {
     initialLocation: '/splash',
     refreshListenable: GoRouterRefreshStream(authBloc.stream),
     redirect: (context, state) {
-      final status = authBloc.state.status;
       final isGoingToAuthOrSplash =
           state.matchedLocation == '/splash' ||
           state.matchedLocation == '/login' ||
           state.matchedLocation == '/register';
 
-      if (status == AuthStatus.unknown) {
-        return '/splash';
-      }
-
-      final loggedIn = status == AuthStatus.authenticated;
-
-      // 1. Unauthenticated users trying to access protected routes
-      if (!loggedIn && !isGoingToAuthOrSplash) {
-        return '/login';
-      }
-
-      // 2. Unauthenticated user on splash screen should go to login
-      if (!loggedIn && state.matchedLocation == '/splash') {
-        return '/login';
-      }
-
-      // 3. Authenticated users trying to access login/register/splash
-      if (loggedIn && isGoingToAuthOrSplash) {
+      if (isGoingToAuthOrSplash) {
         return '/home/dashboard';
       }
 
-      return null; // No redirect needed
+      return null;
     },
     routes: [
       // --- Public Routes ---
