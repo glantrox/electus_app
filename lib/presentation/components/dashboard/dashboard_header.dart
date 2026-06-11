@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:electus_app/core/config/app_config.dart';
 
 class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double safeAreaTop;
@@ -64,9 +65,7 @@ class DashboardHeaderDelegate extends SliverPersistentHeaderDelegate {
                                 radius: 20,
                                 backgroundImage: avatarUrl.isNotEmpty
                                     ? NetworkImage(avatarUrl)
-                                    : const NetworkImage(
-                                        'https://i.pravatar.cc/150?img=47',
-                                      ),
+                                    : NetworkImage(AppConfig.defaultAvatarUrl),
                                 backgroundColor: Colors.white,
                               ),
                               SizedBox(width: 12),

@@ -3,17 +3,20 @@ import 'dart:io';
 
 import 'package:electus_app/data/datasource/candidate/candidate_data_source.dart';
 import 'package:electus_app/data/models/candidate_model.dart';
+import 'package:electus_app/core/config/app_config.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class CandidateDataSourceImpl implements CandidateDataSource {
   final http.Client client;
-  final String baseUrl = 'http://10.0.2.2:3000';
+  final String baseUrl = AppConfig.apiBaseUrl;
 
   final SharedPreferences sharedPreferences;
 
-  CandidateDataSourceImpl({required this.client, required this.sharedPreferences});
+  CandidateDataSourceImpl({
+    required this.client,
+    required this.sharedPreferences,
+  });
 
   Map<String, String> _headers() {
     final token = sharedPreferences.getString('CACHED_AUTH_TOKEN');

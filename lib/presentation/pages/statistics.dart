@@ -8,6 +8,7 @@ import 'package:electus_app/presentation/components/common/skeleton/shimmer_skel
 import 'package:electus_app/presentation/components/common/skeleton/skeleton_card.dart';
 import 'package:electus_app/presentation/bloc/profile/profile_bloc.dart';
 import 'package:electus_app/presentation/bloc/profile/profile_state.dart';
+import 'package:electus_app/core/config/app_config.dart';
 
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({super.key});
@@ -45,7 +46,7 @@ class _DashboardHeader extends StatelessWidget {
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         String name = 'Loading...';
-        String avatarUrl = 'https://i.pravatar.cc/150?img=47';
+        String avatarUrl = AppConfig.defaultAvatarUrl;
 
         if (state is ProfileLoaded) {
           name = state.user.fullName.isNotEmpty

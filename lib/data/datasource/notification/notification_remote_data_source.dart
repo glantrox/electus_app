@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:electus_app/core/error/exceptions.dart';
 import 'package:electus_app/data/models/notification/notification_model.dart';
+import 'package:electus_app/core/config/app_config.dart';
 
 abstract class NotificationRemoteDataSource {
   Future<List<NotificationModel>> getNotifications();
@@ -13,9 +14,12 @@ abstract class NotificationRemoteDataSource {
 class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   final http.Client client;
   final SharedPreferences sharedPreferences;
-  final String baseUrl = 'http://10.0.2.2:3000';
+  final String baseUrl = AppConfig.apiBaseUrl;
 
-  NotificationRemoteDataSourceImpl({required this.client, required this.sharedPreferences});
+  NotificationRemoteDataSourceImpl({
+    required this.client,
+    required this.sharedPreferences,
+  });
 
   Future<String> _getToken() async {
     final token = sharedPreferences.getString('CACHED_AUTH_TOKEN');

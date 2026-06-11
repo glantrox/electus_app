@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'auth_remote_datasource.dart';
 import '../../models/auth_response_model.dart';
+import 'package:electus_app/core/config/app_config.dart';
 
 class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   final http.Client client;
-  final String baseUrl = 'http://10.0.2.2:3000';
+  final String baseUrl = AppConfig.apiBaseUrl;
 
   AuthRemoteDatasourceImpl({required this.client});
 
@@ -14,7 +15,11 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     final response = await client.post(
       Uri.parse('$baseUrl/auth/login'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'DeviceName': 'Flutter Client', 'Email': email, 'Password': password}),
+      body: jsonEncode({
+        'DeviceName': AppConfig.deviceName,
+        'Email': email,
+        'Password': password,
+      }),
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -34,7 +39,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
       Uri.parse('$baseUrl/auth/register'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'DeviceName': 'Flutter Client',
+        'DeviceName': AppConfig.deviceName,
         'FullName': fullName,
         'Email': email,
         'Password': password,

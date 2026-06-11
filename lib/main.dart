@@ -16,9 +16,11 @@ import 'package:electus_app/presentation/bloc/analytics/analytics_event.dart';
 import 'package:electus_app/injection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
   await dependencyInjection();
   runApp(
     BlocProvider(
@@ -56,18 +58,27 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-
     return MultiBlocProvider(
       providers: [
         BlocProvider<LoginBloc>(create: (context) => di<LoginBloc>()),
         BlocProvider<RegisterBloc>(create: (context) => di<RegisterBloc>()),
-        BlocProvider<CandidateListBloc>(create: (context) => di<CandidateListBloc>()),
+        BlocProvider<CandidateListBloc>(
+          create: (context) => di<CandidateListBloc>(),
+        ),
 
-        BlocProvider<CandidateActionBloc>(create: (context) => di<CandidateActionBloc>()),
-        BlocProvider<ProfileBloc>(create: (context) => di<ProfileBloc>()..add(FetchProfileEvent())),
-        BlocProvider<NotificationBloc>(create: (context) => di<NotificationBloc>()..add(FetchNotificationsEvent())),
-        BlocProvider<AnalyticsBloc>(create: (context) => di<AnalyticsBloc>()..add(FetchAnalyticsEvent())),
-
+        BlocProvider<CandidateActionBloc>(
+          create: (context) => di<CandidateActionBloc>(),
+        ),
+        BlocProvider<ProfileBloc>(
+          create: (context) => di<ProfileBloc>()..add(FetchProfileEvent()),
+        ),
+        BlocProvider<NotificationBloc>(
+          create: (context) =>
+              di<NotificationBloc>()..add(FetchNotificationsEvent()),
+        ),
+        BlocProvider<AnalyticsBloc>(
+          create: (context) => di<AnalyticsBloc>()..add(FetchAnalyticsEvent()),
+        ),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

@@ -15,6 +15,19 @@ class UploadCvScreen extends StatefulWidget {
 }
 
 class _UploadCvScreenState extends State<UploadCvScreen> {
+  Future<void> handleUploadCv() async {
+    FilePickerResult? result = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'doc', 'docx', 'txt'],
+    );
+    if (result != null && result.files.single.path != null) {
+      File file = File(result.files.single.path!);
+      if (context.mounted) {
+        context.read<CandidateActionBloc>().add(UploadCandidateEvent(file));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,10 +70,7 @@ class _UploadCvScreenState extends State<UploadCvScreen> {
                   ],
                   stops: const [0.6, 1.0],
                 ),
-                border: Border.all(
-                  color: const Color(0xFF2D7D6F),
-                  width: 2,
-                ),
+                border: Border.all(color: const Color(0xFF2D7D6F), width: 2),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -97,22 +107,19 @@ class _UploadCvScreenState extends State<UploadCvScreen> {
                   const SizedBox(height: 6),
                   const Text(
                     "or select files from your storage",
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 13, color: Colors.grey),
                   ),
                   const SizedBox(height: 28),
                   BlocConsumer<CandidateActionBloc, CandidateActionState>(
                     listener: (context, state) {
                       if (state is CandidateActionSuccess) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.message)),
-                        );
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(state.message)));
                       } else if (state is CandidateActionError) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.message)),
-                        );
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(state.message)));
                       }
                     },
                     builder: (context, state) {
@@ -124,22 +131,7 @@ class _UploadCvScreenState extends State<UploadCvScreen> {
                               width: 250,
                               height: 48,
                               child: ElevatedButton.icon(
-                                onPressed: isLoading
-                                    ? null
-                                    : () async {
-                                        FilePickerResult? result = await FilePicker.pickFiles(
-                                          type: FileType.custom,
-                                          allowedExtensions: ['pdf', 'doc', 'docx', 'txt'],
-                                        );
-                                        if (result != null && result.files.single.path != null) {
-                                          File file = File(result.files.single.path!);
-                                          if (context.mounted) {
-                                            context.read<CandidateActionBloc>().add(
-                                              UploadCandidateEvent(file),
-                                            );
-                                          }
-                                        }
-                                      },
+                                onPressed: isLoading ? null : handleUploadCv,
                                 icon: isLoading
                                     ? const SizedBox(
                                         width: 16,
@@ -149,8 +141,13 @@ class _UploadCvScreenState extends State<UploadCvScreen> {
                                           color: Colors.white,
                                         ),
                                       )
-                                    : const Icon(Icons.folder_open_outlined, size: 18),
-                                label: Text(isLoading ? 'Uploading...' : 'Browse Files'),
+                                    : const Icon(
+                                        Icons.folder_open_outlined,
+                                        size: 18,
+                                      ),
+                                label: Text(
+                                  isLoading ? 'Uploading...' : 'Browse Files',
+                                ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF2D7D6F),
                                   foregroundColor: Colors.white,
@@ -169,11 +166,16 @@ class _UploadCvScreenState extends State<UploadCvScreen> {
                                 onPressed: () {
                                   context.push('/scan_cv');
                                 },
-                                icon: const Icon(Icons.camera_alt_outlined, size: 18),
+                                icon: const Icon(
+                                  Icons.camera_alt_outlined,
+                                  size: 18,
+                                ),
                                 label: const Text("Scan with Camera"),
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: const Color(0xFF2D7D6F),
-                                  side: const BorderSide(color: Color(0xFF2D7D6F)),
+                                  side: const BorderSide(
+                                    color: Color(0xFF2D7D6F),
+                                  ),
                                   shape: const StadiumBorder(),
                                 ),
                               ),
@@ -186,10 +188,7 @@ class _UploadCvScreenState extends State<UploadCvScreen> {
                   const SizedBox(height: 20),
                   const Text(
                     "Maximum file size: 10MB per document.",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                 ],
               ),
@@ -198,11 +197,7 @@ class _UploadCvScreenState extends State<UploadCvScreen> {
 
             Row(
               children: const [
-                Icon(
-                  Icons.access_time,
-                  color: Color(0xFF2D7D6F),
-                  size: 24,
-                ),
+                Icon(Icons.access_time, color: Color(0xFF2D7D6F), size: 24),
                 SizedBox(width: 8),
                 Text(
                   "Recent Uploads",
@@ -231,7 +226,10 @@ class _UploadCvScreenState extends State<UploadCvScreen> {
                       color: const Color(0xFFE8F5E9),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.check_circle, color: Color(0xFF2D7D6F)),
+                    child: const Icon(
+                      Icons.check_circle,
+                      color: Color(0xFF2D7D6F),
+                    ),
                   ),
                   const SizedBox(width: 12),
                   const Expanded(
@@ -240,9 +238,15 @@ class _UploadCvScreenState extends State<UploadCvScreen> {
                       children: [
                         Text(
                           "j_smith_marketing_portfolio.docx",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
                         ),
-                        Text("1.1 MB", style: TextStyle(color: Colors.grey, fontSize: 12)),
+                        Text(
+                          "1.1 MB",
+                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                        ),
                       ],
                     ),
                   ),
@@ -250,8 +254,18 @@ class _UploadCvScreenState extends State<UploadCvScreen> {
                     onPressed: () {},
                     child: const Row(
                       children: [
-                        Text("View\nProfile", style: TextStyle(color: Color(0xFF2D7D6F), fontSize: 12)),
-                        Icon(Icons.arrow_forward, color: Color(0xFF2D7D6F), size: 16),
+                        Text(
+                          "View\nProfile",
+                          style: TextStyle(
+                            color: Color(0xFF2D7D6F),
+                            fontSize: 12,
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward,
+                          color: Color(0xFF2D7D6F),
+                          size: 16,
+                        ),
                       ],
                     ),
                   ),
@@ -284,7 +298,10 @@ class _UploadCvScreenState extends State<UploadCvScreen> {
                       children: [
                         Text(
                           "corrupted_file_001.pdf",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
                         ),
                         Text(
                           "Failed to parse document format.",

@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:electus_app/core/error/exceptions.dart';
 import 'package:electus_app/data/models/analytics/analytics_model.dart';
+import 'package:electus_app/core/config/app_config.dart';
 
 abstract class AnalyticsRemoteDataSource {
   Future<AnalyticsOverviewModel> getAnalyticsOverview();
@@ -12,9 +13,12 @@ abstract class AnalyticsRemoteDataSource {
 class AnalyticsRemoteDataSourceImpl implements AnalyticsRemoteDataSource {
   final http.Client client;
   final SharedPreferences sharedPreferences;
-  final String baseUrl = '  http://10.0.2.2:3000';
+  final String baseUrl = AppConfig.apiBaseUrl;
 
-  AnalyticsRemoteDataSourceImpl({required this.client, required this.sharedPreferences});
+  AnalyticsRemoteDataSourceImpl({
+    required this.client,
+    required this.sharedPreferences,
+  });
 
   Future<String> _getToken() async {
     final token = sharedPreferences.getString('CACHED_AUTH_TOKEN');
