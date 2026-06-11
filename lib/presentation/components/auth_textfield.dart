@@ -1,4 +1,3 @@
-import 'package:electus_app/core/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 class AuthTextField extends StatelessWidget {
@@ -58,24 +57,27 @@ class AuthTextField extends StatelessWidget {
             ),
             filled: true,
             fillColor: Theme.of(context).colorScheme.surface,
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 16,
-            ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             prefixIcon: prefixIcon,
             suffixIcon: suffixIcon,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.outlineVariant,
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+              borderSide: BorderSide(
+                color: Theme.of(context).colorScheme.outlineVariant,
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
-                color: Theme.of(context).colorScheme.primary, // The blue border in the image indicates focus state
+                color: Theme.of(context)
+                    .colorScheme
+                    .primary, // The blue border in the image indicates focus state
                 width: 1.5,
               ),
             ),

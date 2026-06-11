@@ -1,4 +1,3 @@
-import 'package:electus_app/core/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -11,7 +10,10 @@ class SplashScreen extends StatelessWidget {
       body: Center(
         child: Text(
           'ELECTUS',
-          style: TextStyle(color: Theme.of(context).colorScheme.surface, fontSize: 32),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.surface,
+            fontSize: 32,
+          ),
         ),
       ),
     );

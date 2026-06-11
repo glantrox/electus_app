@@ -1,4 +1,3 @@
-import 'package:electus_app/core/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +19,10 @@ class NotificationScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.primary),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.primary,
+          ),
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -42,12 +44,21 @@ class NotificationScreen extends StatelessWidget {
               itemBuilder: (context, index) => NotificationCardSkeleton(),
             );
           } else if (state is NotificationError) {
-            return Center(child: Text(state.message, style: TextStyle(color: Colors.red)));
+            return Center(
+              child: Text(state.message, style: TextStyle(color: Colors.red)),
+            );
           } else if (state is NotificationLoaded) {
             final notifications = state.notifications;
 
             if (notifications.isEmpty) {
-              return Center(child: Text('No notifications', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)));
+              return Center(
+                child: Text(
+                  'No notifications',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              );
             }
 
             return ListView(
@@ -55,7 +66,9 @@ class NotificationScreen extends StatelessWidget {
               children: [
                 _StreamHeader(
                   onMarkAllRead: () {
-                    context.read<NotificationBloc>().add(MarkAllNotificationsReadEvent());
+                    context.read<NotificationBloc>().add(
+                      MarkAllNotificationsReadEvent(),
+                    );
                   },
                 ),
                 SizedBox(height: 24),
@@ -66,7 +79,9 @@ class NotificationScreen extends StatelessWidget {
                       entity: notif,
                       onTap: () {
                         if (!notif.isRead) {
-                          context.read<NotificationBloc>().add(MarkNotificationReadEvent(notif.id));
+                          context.read<NotificationBloc>().add(
+                            MarkNotificationReadEvent(notif.id),
+                          );
                         }
                       },
                     ),
@@ -125,35 +140,44 @@ class _NotificationCard extends StatelessWidget {
   final NotificationEntity entity;
   final VoidCallback onTap;
 
-  const _NotificationCard({
-    required this.entity,
-    required this.onTap,
-  });
+  const _NotificationCard({required this.entity, required this.onTap});
 
   Color _getAccentColor() {
     switch (entity.type) {
-      case 'INTERVIEW_REMINDER': return const Color(0xFF8B5CF6);
-      case 'NEW_CV': return const Color(0xFF10B981);
-      case 'STATUS_UPDATE': return const Color(0xFF3B82F6);
-      default: return const Color(0xFFF59E0B);
+      case 'INTERVIEW_REMINDER':
+        return const Color(0xFF8B5CF6);
+      case 'NEW_CV':
+        return const Color(0xFF10B981);
+      case 'STATUS_UPDATE':
+        return const Color(0xFF3B82F6);
+      default:
+        return const Color(0xFFF59E0B);
     }
   }
 
   Color _getBgColor() {
     switch (entity.type) {
-      case 'INTERVIEW_REMINDER': return const Color(0xFFF5F3FF);
-      case 'NEW_CV': return const Color(0xFFECFDF5);
-      case 'STATUS_UPDATE': return const Color(0xFFEFF6FF);
-      default: return const Color(0xFFFFFBEB);
+      case 'INTERVIEW_REMINDER':
+        return const Color(0xFFF5F3FF);
+      case 'NEW_CV':
+        return const Color(0xFFECFDF5);
+      case 'STATUS_UPDATE':
+        return const Color(0xFFEFF6FF);
+      default:
+        return const Color(0xFFFFFBEB);
     }
   }
 
   IconData _getIcon() {
     switch (entity.type) {
-      case 'INTERVIEW_REMINDER': return Icons.calendar_today_outlined;
-      case 'NEW_CV': return Icons.cloud_upload_outlined;
-      case 'STATUS_UPDATE': return Icons.person_outline;
-      default: return Icons.settings_outlined;
+      case 'INTERVIEW_REMINDER':
+        return Icons.calendar_today_outlined;
+      case 'NEW_CV':
+        return Icons.cloud_upload_outlined;
+      case 'STATUS_UPDATE':
+        return Icons.person_outline;
+      default:
+        return Icons.settings_outlined;
     }
   }
 
@@ -163,15 +187,24 @@ class _NotificationCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: entity.isRead ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.surface.withValues(alpha: 0.9),
+          color: entity.isRead
+              ? Theme.of(context).colorScheme.surface
+              : Theme.of(context).colorScheme.surface.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(16),
-          border: entity.isRead ? null : Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3), width: 1),
+          border: entity.isRead
+              ? null
+              : Border.all(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.3),
+                  width: 1,
+                ),
           boxShadow: const [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 8,
               offset: Offset(0, 2),
-            )
+            ),
           ],
         ),
         padding: EdgeInsets.all(16),
@@ -199,7 +232,9 @@ class _NotificationCard extends StatelessWidget {
                           entity.title,
                           style: TextStyle(
                             fontSize: 16,
-                            fontWeight: entity.isRead ? FontWeight.w600 : FontWeight.bold,
+                            fontWeight: entity.isRead
+                                ? FontWeight.w600
+                                : FontWeight.bold,
                             color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
@@ -217,14 +252,20 @@ class _NotificationCard extends StatelessWidget {
                   Text(
                     entity.content,
                     style: TextStyle(
-                      color: entity.isRead ? Theme.of(context).colorScheme.onSurfaceVariant : Theme.of(context).colorScheme.onSurface, 
+                      color: entity.isRead
+                          ? Theme.of(context).colorScheme.onSurfaceVariant
+                          : Theme.of(context).colorScheme.onSurface,
                       fontSize: 14,
                     ),
                   ),
-                  if (entity.badgeLabel != null && entity.badgeLabel!.isNotEmpty) ...[
+                  if (entity.badgeLabel != null &&
+                      entity.badgeLabel!.isNotEmpty) ...[
                     SizedBox(height: 12),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: _getAccentColor().withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
@@ -256,7 +297,11 @@ class _CaughtUpFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(Icons.check_circle_outline, color: Theme.of(context).colorScheme.primary, size: 48),
+        Icon(
+          Icons.check_circle_outline,
+          color: Theme.of(context).colorScheme.primary,
+          size: 48,
+        ),
         SizedBox(height: 12),
         Text(
           "You're all caught up!",

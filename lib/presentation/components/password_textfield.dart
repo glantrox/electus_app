@@ -1,4 +1,3 @@
-import 'package:electus_app/core/theme/colors.dart';
 import 'package:electus_app/presentation/components/auth_textfield.dart';
 import 'package:flutter/material.dart';
 

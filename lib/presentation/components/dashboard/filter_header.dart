@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:electus_app/core/theme/colors.dart';
 
 class FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
   final String selectedFilter;
@@ -17,7 +16,7 @@ class FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     return Container(
-      color: Theme.of(context).scaffoldBackgroundColor, 
+      color: Theme.of(context).scaffoldBackgroundColor,
       padding: EdgeInsets.only(top: 16, bottom: 16),
       alignment: Alignment.center,
       child: SizedBox(
@@ -79,17 +78,23 @@ class FilterChipWidget extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
+          color: isSelected
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.outlineVariant,
+            color: isSelected
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.outlineVariant,
           ),
         ),
         child: Center(
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurface,
+              color: isSelected
+                  ? Colors.white
+                  : Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w600,
               fontSize: 14,
             ),

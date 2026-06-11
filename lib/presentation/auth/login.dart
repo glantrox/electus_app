@@ -1,4 +1,3 @@
-import 'package:electus_app/core/theme/colors.dart';
 import 'package:electus_app/presentation/auth/bloc/auth/auth_bloc.dart';
 import 'package:electus_app/presentation/auth/bloc/auth/auth_event.dart';
 import 'package:electus_app/presentation/auth/bloc/auth/auth_state.dart';
@@ -73,10 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ],
           child: Center(
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 32.0,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -126,7 +122,10 @@ class _LoginHeader extends StatelessWidget {
         Text(
           'The hiring workspace for high-growth teams.',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style: TextStyle(
+            fontSize: 16,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );
@@ -266,7 +265,9 @@ class _LoginFooter extends StatelessWidget {
       children: [
         Text(
           'Don\'t have an account? ',
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         GestureDetector(
           onTap: () => context.go('/register'),

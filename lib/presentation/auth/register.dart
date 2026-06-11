@@ -1,4 +1,3 @@
-import 'package:electus_app/core/theme/colors.dart';
 import 'package:electus_app/presentation/components/auth_textfield.dart';
 import 'package:electus_app/presentation/components/password_textfield.dart';
 import 'package:flutter/material.dart';
@@ -75,10 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ],
           child: Center(
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 32.0,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -124,7 +120,10 @@ class _AuthHeader extends StatelessWidget {
         Text(
           'Join the next generation of hiring for growing teams.',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style: TextStyle(
+            fontSize: 16,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );
@@ -153,7 +152,9 @@ class _RegisterFormCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(24.0),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface, // Adjust if your card has a slightly different tint
+        color: Theme.of(context)
+            .colorScheme
+            .surface, // Adjust if your card has a slightly different tint
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
         boxShadow: [
@@ -230,7 +231,9 @@ class _AuthFooter extends StatelessWidget {
       children: [
         Text(
           'Already have an account? ',
-          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         GestureDetector(
           onTap: () => context.go('/login'),
