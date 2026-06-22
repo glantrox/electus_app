@@ -10,7 +10,6 @@ import 'package:electus_app/presentation/pages/notification.dart';
 import 'package:electus_app/presentation/pages/statistics.dart';
 import 'package:electus_app/core/router/router_refresh_stream.dart';
 import 'package:electus_app/presentation/auth/bloc/auth/auth_bloc.dart';
-import 'package:electus_app/presentation/auth/bloc/auth/auth_state.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
