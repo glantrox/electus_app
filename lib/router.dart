@@ -36,26 +36,22 @@ class AppRouter {
     refreshListenable: GoRouterRefreshStream(authBloc.stream),
     redirect: (context, state) {
       final authStatus = authBloc.state.status;
-      final isGoingToAuthOrSplash =
-          state.matchedLocation == '/splash' ||
-          state.matchedLocation == '/login' ||
-          state.matchedLocation == '/register';
 
       if (authStatus == AuthStatus.unknown) {
-        // While checking auth, stay on splash
-        if (state.matchedLocation != '/splash') {
-          return '/splash';
-        }
-        return null;
+        return state.matchedLocation == '/splash' ? null : '/splash';
+      }
+
+      final isAuthScreen = state.matchedLocation == '/login' ||
+          state.matchedLocation == '/register';
+
+      if (authStatus == AuthStatus.unauthenticated) {
+        return isAuthScreen ? null : '/login';
       }
 
       if (authStatus == AuthStatus.authenticated) {
-        if (isGoingToAuthOrSplash) {
+        final isSplash = state.matchedLocation == '/splash';
+        if (isAuthScreen || isSplash) {
           return '/home/dashboard';
-        }
-      } else if (authStatus == AuthStatus.unauthenticated) {
-        if (!isGoingToAuthOrSplash) {
-          return '/login';
         }
       }
 
