@@ -74,7 +74,7 @@ DEVICE_NAME=Flutter Client
 
 Aplikasi ini disarankan untuk dijalankan pada platform **Windows**, **Android**, atau **iOS**. 
 
-> [!WARNING]
+> [WARNING]:
 > Jika Anda menjalankan aplikasi ini menggunakan **Chrome (Web)**, Anda akan mengalami masalah **CORS (Cross-Origin Resource Sharing) restriction** ketika aplikasi mencoba berinteraksi dengan API.
 
 ## Installation
