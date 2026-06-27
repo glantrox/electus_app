@@ -17,30 +17,24 @@ class FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
   ) {
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
-      padding: EdgeInsets.only(top: 16, bottom: 16),
-      alignment: Alignment.center,
+      padding: const EdgeInsets.only(top: 16, bottom: 16),
+      alignment: Alignment.centerLeft,
       child: SizedBox(
         height: 36,
         child: ListView(
           scrollDirection: Axis.horizontal,
-          padding: EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           children: [
             FilterChipWidget(
-              label: 'All Roles',
-              isSelected: selectedFilter == 'All Roles',
-              onTap: () => onFilterChanged('All Roles'),
+              label: 'Pending Review',
+              isSelected: selectedFilter == 'Pending Review',
+              onTap: () => onFilterChanged('Pending Review'),
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             FilterChipWidget(
-              label: 'Frontend Dev',
-              isSelected: selectedFilter == 'Frontend Dev',
-              onTap: () => onFilterChanged('Frontend Dev'),
-            ),
-            SizedBox(width: 8),
-            FilterChipWidget(
-              label: 'UI/UX Designer',
-              isSelected: selectedFilter == 'UI/UX Designer',
-              onTap: () => onFilterChanged('UI/UX Designer'),
+              label: 'Reviewed',
+              isSelected: selectedFilter == 'Reviewed',
+              onTap: () => onFilterChanged('Reviewed'),
             ),
           ],
         ),
@@ -73,18 +67,19 @@ class FilterChipWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const activeColor = Color(0xFF0F5A47); // Premium dark green color
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? Theme.of(context).colorScheme.primary
+              ? activeColor
               : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected
-                ? Theme.of(context).colorScheme.primary
+                ? activeColor
                 : Theme.of(context).colorScheme.outlineVariant,
           ),
         ),

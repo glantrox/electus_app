@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:electus_app/domain/entities/candidate_entity.dart';
 import 'package:electus_app/presentation/bloc/profile/profile_bloc.dart';
 import 'package:electus_app/presentation/bloc/profile/profile_state.dart';
+import 'package:electus_app/presentation/bloc/candidate_action/candidate_action_bloc.dart';
+import 'package:electus_app/presentation/bloc/candidate_action/candidate_action_event.dart';
 import 'package:electus_app/presentation/components/dashboard/riasec_donut_chart.dart';
 
 class CandidateProfileBottomSheet extends StatelessWidget {
@@ -106,8 +109,22 @@ class CandidateProfileBottomSheet extends StatelessWidget {
                       ),
                       const SizedBox(height: 12),
                       InkWell(
-                        onTap: () {
-                          // TODO: Launch URL
+                        onTap: () async {
+                          String urlString = candidate.portfolioUrl.trim();
+                          if (urlString.isNotEmpty) {
+                            if (!urlString.startsWith('http://') && !urlString.startsWith('https://')) {
+                              urlString = 'https://$urlString';
+                            }
+                            try {
+                              final Uri url = Uri.parse(urlString);
+                              await launchUrl(
+                                url,
+                                mode: LaunchMode.externalApplication,
+                              );
+                            } catch (_) {
+                              // Ignored
+                            }
+                          }
                         },
                         child: Row(
                           children: [
@@ -374,7 +391,14 @@ class CandidateProfileBottomSheet extends StatelessWidget {
                   const SizedBox(height: 12),
                   OutlinedButton(
                     onPressed: () {
-                      // TODO: Implement Mark Done functionality
+                      final isReviewed = candidate.reviewStatus == 'reviewed' || candidate.reviewStatus == 'done';
+                      final newStatus = isReviewed ? 'pending' : 'reviewed';
+                      context.read<CandidateActionBloc>().add(
+                            UpdateCandidateStatusEvent(
+                              candidate.id,
+                              newStatus,
+                            ),
+                          );
                       Navigator.of(context).pop();
                     },
                     style: OutlinedButton.styleFrom(
@@ -385,9 +409,11 @@ class CandidateProfileBottomSheet extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text(
-                      'Done Reviewing',
-                      style: TextStyle(
+                    child: Text(
+                      (candidate.reviewStatus == 'reviewed' || candidate.reviewStatus == 'done')
+                          ? 'Mark Pending'
+                          : 'Done Reviewing',
+                      style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),

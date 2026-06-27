@@ -5,6 +5,7 @@ import 'package:electus_app/data/datasource/candidate/candidate_data_source.dart
 import 'package:electus_app/data/models/candidate_model.dart';
 import 'package:electus_app/core/config/app_config.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CandidateDataSourceImpl implements CandidateDataSource {
@@ -68,7 +69,20 @@ class CandidateDataSourceImpl implements CandidateDataSource {
     if (token != null) {
       request.headers.addAll({'Authorization': 'Bearer $token'});
     }
-    request.files.add(await http.MultipartFile.fromPath('file', file.path));
+    
+    final extension = file.path.split('.').last.toLowerCase();
+    MediaType? contentType;
+    if (extension == 'pdf') {
+      contentType = MediaType('application', 'pdf');
+    } else if (extension == 'docx') {
+      contentType = MediaType('application', 'vnd.openxmlformats-officedocument.wordprocessingml.document');
+    }
+
+    request.files.add(await http.MultipartFile.fromPath(
+      'file',
+      file.path,
+      contentType: contentType,
+    ));
 
     final streamedResponse = await request.send();
     final response = await http.Response.fromStream(streamedResponse);

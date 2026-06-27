@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:electus_app/presentation/bloc/candidate_action/candidate_action_bloc.dart';
+import 'package:electus_app/presentation/bloc/candidate_action/candidate_action_event.dart';
 import 'package:electus_app/domain/entities/candidate_entity.dart';
 import 'package:electus_app/presentation/components/dashboard/candidate_profile_bottom_sheet.dart';
 
@@ -204,24 +207,33 @@ class CandidateCard extends StatelessWidget {
                         SizedBox(width: 16),
                         Expanded(
                           child: TextButton.icon(
-                            onPressed: () {},
+                            onPressed: () {
+                              final isReviewed = candidate.reviewStatus == 'reviewed' || candidate.reviewStatus == 'done';
+                              final newStatus = isReviewed ? 'pending' : 'reviewed';
+                              context.read<CandidateActionBloc>().add(
+                                    UpdateCandidateStatusEvent(
+                                      candidate.id,
+                                      newStatus,
+                                    ),
+                                  );
+                            },
                             icon: Icon(
-                              Icons.done_all,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurfaceVariant,
+                              (candidate.reviewStatus == 'reviewed' || candidate.reviewStatus == 'done')
+                                  ? Icons.pending_actions
+                                  : Icons.done_all,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                             label: Text(
-                              'Mark Done',
+                              (candidate.reviewStatus == 'reviewed' || candidate.reviewStatus == 'done')
+                                  ? 'Mark Pending'
+                                  : 'Mark Done',
                               style: TextStyle(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
+                                color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             style: TextButton.styleFrom(
-                              padding: EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
                           ),
                         ),

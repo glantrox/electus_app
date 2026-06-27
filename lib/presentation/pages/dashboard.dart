@@ -16,6 +16,8 @@ import 'package:electus_app/presentation/bloc/analytics/analytics_event.dart';
 import 'package:electus_app/presentation/bloc/profile/profile_bloc.dart';
 import 'package:electus_app/presentation/bloc/profile/profile_state.dart';
 import 'package:electus_app/presentation/bloc/profile/profile_event.dart';
+import 'package:electus_app/presentation/bloc/candidate_action/candidate_action_bloc.dart';
+import 'package:electus_app/presentation/bloc/candidate_action/candidate_action_state.dart';
 import 'package:electus_app/presentation/components/common/skeleton/candidate_card_skeleton.dart';
 import 'package:electus_app/presentation/components/common/skeleton/stat_card_skeleton.dart';
 
@@ -30,7 +32,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final FocusNode _searchFocusNode = FocusNode();
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
-  String _selectedFilter = 'All Roles';
+  String _selectedFilter = 'Pending Review';
 
   @override
   void initState() {
@@ -66,19 +68,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (_selectedFilter == filter) return;
     setState(() {
       _selectedFilter = filter;
-      _searchController.clear();
     });
-
-    if (filter == 'All Roles') {
-      context.read<CandidateListBloc>().add(FetchCandidates());
-    } else {
-      context.read<CandidateListBloc>().add(SearchCandidatesEvent(filter));
-    }
   }
 
   Future<void> _onRefresh() async {
     setState(() {
-      _selectedFilter = 'All Roles';
+      _selectedFilter = 'Pending Review';
       _searchController.clear();
     });
 
@@ -99,107 +94,128 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: RefreshIndicator(
-        onRefresh: _onRefresh,
-        color: Theme.of(context).colorScheme.primary,
-        child: CustomScrollView(
-          slivers: [
-            BlocBuilder<ProfileBloc, ProfileState>(
-              builder: (context, profileState) {
-                return BlocBuilder<AnalyticsBloc, AnalyticsState>(
-                  builder: (context, analyticsState) {
-                    String userName = 'Guest';
-                    String avatarUrl = '';
-                    String totalApplicants = '0';
+    return BlocListener<CandidateActionBloc, CandidateActionState>(
+      listener: (context, state) {
+        if (state is CandidateActionSuccess) {
+          context.read<CandidateListBloc>().add(FetchCandidates());
+          context.read<AnalyticsBloc>().add(FetchAnalyticsEvent());
+          context.read<ProfileBloc>().add(FetchProfileEvent());
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: RefreshIndicator(
+          onRefresh: _onRefresh,
+          color: Theme.of(context).colorScheme.primary,
+          child: CustomScrollView(
+            slivers: [
+              BlocBuilder<ProfileBloc, ProfileState>(
+                builder: (context, profileState) {
+                  return BlocBuilder<AnalyticsBloc, AnalyticsState>(
+                    builder: (context, analyticsState) {
+                      String userName = 'Guest';
+                      String avatarUrl = '';
+                      String totalApplicants = '0';
 
-                    if (profileState is ProfileLoaded) {
-                      userName = profileState.user.fullName;
-                      avatarUrl = profileState.user.avatarUrl;
-                    }
+                      if (profileState is ProfileLoaded) {
+                        userName = profileState.user.fullName;
+                        avatarUrl = profileState.user.avatarUrl;
+                      }
 
-                    if (analyticsState is AnalyticsLoaded) {
-                      totalApplicants = analyticsState
-                          .overview
-                          .totalApplicants
-                          .value
-                          .toString();
-                    }
+                      if (analyticsState is AnalyticsLoaded) {
+                        totalApplicants = analyticsState
+                            .overview
+                            .totalApplicants
+                            .value
+                            .toString();
+                      }
 
-                    return SliverPersistentHeader(
-                      pinned: true,
-                      delegate: DashboardHeaderDelegate(
-                        safeAreaTop: MediaQuery.of(context).padding.top,
-                        userName: userName,
-                        avatarUrl: avatarUrl,
-                        totalApplicants: totalApplicants,
-                        searchFocusNode: _searchFocusNode,
-                        searchController: _searchController,
-                        onBack: _onBack,
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-            if (!_searchFocusNode.hasFocus)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.all(24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _buildOverviewHeader(),
-                      SizedBox(height: 20),
-                      _buildStatCardsGrid(),
-                    ],
-                  ),
-                ),
-              ),
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: FilterHeaderDelegate(
-                selectedFilter: _selectedFilter,
-                onFilterChanged: _onFilterChanged,
-              ),
-            ),
-            SliverPadding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
-              sliver: BlocBuilder<CandidateListBloc, CandidateListState>(
-                builder: (context, state) {
-                  if (state is CandidateListLoading) {
-                    return SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        return CandidateCardSkeleton();
-                      }, childCount: 3),
-                    );
-                  } else if (state is CandidateListError) {
-                    return SliverToBoxAdapter(
-                      child: Center(child: Text('Error: ${state.message}')),
-                    );
-                  } else if (state is CandidateListLoaded) {
-                    final candidates = state.candidates;
-                    if (candidates.isEmpty) {
-                      return const SliverToBoxAdapter(
-                        child: Center(child: Text('No candidates found.')),
+                      return SliverPersistentHeader(
+                        pinned: true,
+                        delegate: DashboardHeaderDelegate(
+                          safeAreaTop: MediaQuery.of(context).padding.top,
+                          userName: userName,
+                          avatarUrl: avatarUrl,
+                          totalApplicants: totalApplicants,
+                          searchFocusNode: _searchFocusNode,
+                          searchController: _searchController,
+                          onBack: _onBack,
+                        ),
                       );
-                    }
-                    return SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 16.0),
-                          child: CandidateCard(candidate: candidates[index]),
-                        );
-                      }, childCount: candidates.length),
-                    );
-                  }
-                  return const SliverToBoxAdapter(child: SizedBox.shrink());
+                    },
+                  );
                 },
               ),
-            ),
-            const SliverToBoxAdapter(child: SizedBox(height: 120)),
-          ],
+              if (!_searchFocusNode.hasFocus)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.all(24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildOverviewHeader(),
+                        SizedBox(height: 20),
+                        _buildStatCardsGrid(),
+                      ],
+                    ),
+                  ),
+                ),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: FilterHeaderDelegate(
+                  selectedFilter: _selectedFilter,
+                  onFilterChanged: _onFilterChanged,
+                ),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                sliver: BlocBuilder<CandidateListBloc, CandidateListState>(
+                  builder: (context, state) {
+                    if (state is CandidateListLoading) {
+                      return SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          return CandidateCardSkeleton();
+                        }, childCount: 3),
+                      );
+                    } else if (state is CandidateListError) {
+                      return SliverToBoxAdapter(
+                        child: Center(child: Text('Error: ${state.message}')),
+                      );
+                    } else if (state is CandidateListLoaded) {
+                      final candidates = state.candidates.where((c) {
+                        if (_selectedFilter == 'Pending Review') {
+                          return c.reviewStatus == 'pending' || c.reviewStatus.isEmpty;
+                        } else {
+                          return c.reviewStatus == 'reviewed' || c.reviewStatus == 'done';
+                        }
+                      }).toList();
+
+                      if (candidates.isEmpty) {
+                        return const SliverToBoxAdapter(
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 32.0),
+                              child: Text('No candidates found.'),
+                            ),
+                          ),
+                        );
+                      }
+                      return SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: CandidateCard(candidate: candidates[index]),
+                          );
+                        }, childCount: candidates.length),
+                      );
+                    }
+                    return const SliverToBoxAdapter(child: SizedBox.shrink());
+                  },
+                ),
+              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 120)),
+            ],
+          ),
         ),
       ),
     );
