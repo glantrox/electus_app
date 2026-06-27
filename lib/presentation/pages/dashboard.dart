@@ -40,6 +40,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
     _searchController.addListener(_onSearchChanged);
     context.read<CandidateListBloc>().add(FetchCandidates());
+    context.read<ProfileBloc>().add(FetchProfileEvent());
+    context.read<AnalyticsBloc>().add(FetchAnalyticsEvent());
   }
 
   void _onSearchChanged() {
