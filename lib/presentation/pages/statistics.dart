@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:electus_app/presentation/bloc/analytics/analytics_bloc.dart';
 import 'package:electus_app/presentation/bloc/analytics/analytics_state.dart';
 import 'package:electus_app/presentation/components/common/skeleton/stat_card_skeleton.dart';
@@ -22,12 +23,14 @@ class StatisticsScreen extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: const [
               _DashboardHeader(),
               SizedBox(height: 32),
               _TitleSection(),
               SizedBox(height: 24),
               _MetricsGrid(),
+              SizedBox(height: 32),
+              _TalentDistributionSection(),
               SizedBox(height: 32),
               _PipelineSection(),
             ],
@@ -70,7 +73,7 @@ class _DashboardHeader extends StatelessWidget {
             const Spacer(),
             IconButton(
               onPressed: () => context.push('/notification'),
-              icon: Icon(Icons.notifications_none_outlined),
+              icon: const Icon(Icons.notifications_none_outlined),
               color: Theme.of(context).colorScheme.primary,
             ),
           ],
@@ -97,7 +100,7 @@ class _TitleSection extends StatelessWidget {
             letterSpacing: -0.5,
           ),
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           'Key metrics for your hiring pipeline.',
           style: TextStyle(
@@ -119,7 +122,7 @@ class _MetricsGrid extends StatelessWidget {
       builder: (context, state) {
         if (state is AnalyticsLoading) {
           return Column(
-            children: [
+            children: const [
               Row(
                 children: [
                   Expanded(child: StatCardSkeleton()),
@@ -127,7 +130,7 @@ class _MetricsGrid extends StatelessWidget {
                   Expanded(child: StatCardSkeleton()),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(child: StatCardSkeleton()),
@@ -139,7 +142,7 @@ class _MetricsGrid extends StatelessWidget {
           );
         } else if (state is AnalyticsError) {
           return Center(
-            child: Text(state.message, style: TextStyle(color: Colors.red)),
+            child: Text(state.message, style: const TextStyle(color: Colors.red)),
           );
         } else if (state is AnalyticsLoaded) {
           final overview = state.overview;
@@ -340,6 +343,133 @@ class _MetricCard extends StatelessWidget {
   }
 }
 
+class _TalentDistributionSection extends StatelessWidget {
+  const _TalentDistributionSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AnalyticsBloc, AnalyticsState>(
+      builder: (context, state) {
+        if (state is AnalyticsLoading) {
+          return const SkeletonCard(height: 240);
+        } else if (state is AnalyticsLoaded) {
+          final Map<String, double> riasecData = {
+            'Realistic': 15,
+            'Investigative': 25,
+            'Artistic': 10,
+            'Social': 20,
+            'Enterprising': 18,
+            'Conventional': 12,
+          };
+
+          final List<Color> colors = [
+            const Color(0xFFEF4444),
+            const Color(0xFF3B82F6),
+            const Color(0xFF10B981),
+            const Color(0xFFF59E0B),
+            const Color(0xFF8B5CF6),
+            const Color(0xFF6B7280),
+          ];
+
+          return Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Talent Distribution (RIASEC)',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 140,
+                      height: 140,
+                      child: PieChart(
+                        PieChartData(
+                          sectionsSpace: 2,
+                          centerSpaceRadius: 35,
+                          sections: List.generate(riasecData.length, (index) {
+                            final value = riasecData.values.elementAt(index);
+                            return PieChartSectionData(
+                              color: colors[index],
+                              value: value,
+                              title: '${value.toInt()}%',
+                              radius: 35,
+                              titleStyle: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(riasecData.length, (index) {
+                          final key = riasecData.keys.elementAt(index);
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 12,
+                                  height: 12,
+                                  decoration: BoxDecoration(
+                                    color: colors[index],
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    key,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                      color: Theme.of(context).colorScheme.onSurface,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
+    );
+  }
+}
+
 class _PipelineSection extends StatelessWidget {
   const _PipelineSection();
 
@@ -377,7 +507,7 @@ class _PipelineSection extends StatelessWidget {
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                              children: const [
                                 SkeletonBox(width: 100, height: 16),
                                 SizedBox(height: 12),
                                 SkeletonBox(width: double.infinity, height: 8),
