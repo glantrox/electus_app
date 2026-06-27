@@ -161,7 +161,8 @@ class _UploadCvScreenState extends State<UploadCvScreen> {
                             _recentUploads.insert(
                               0,
                               UploadedCvItem(
-                                filename: _lastSelectedFilename ?? 'candidate_cv.pdf',
+                                filename:
+                                    _lastSelectedFilename ?? 'candidate_cv.pdf',
                                 size: _lastSelectedSize ?? 'Unknown size',
                                 isSuccess: true,
                                 message: 'Parsed successfully',
@@ -170,8 +171,12 @@ class _UploadCvScreenState extends State<UploadCvScreen> {
                             );
                           });
                           // Trigger refreshes for Dashboard data
-                          context.read<CandidateListBloc>().add(FetchCandidates());
-                          context.read<AnalyticsBloc>().add(FetchAnalyticsEvent());
+                          context.read<CandidateListBloc>().add(
+                            FetchCandidates(),
+                          );
+                          context.read<AnalyticsBloc>().add(
+                            FetchAnalyticsEvent(),
+                          );
                           context.read<ProfileBloc>().add(FetchProfileEvent());
                         } else if (state is CandidateActionError) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -181,7 +186,8 @@ class _UploadCvScreenState extends State<UploadCvScreen> {
                             _recentUploads.insert(
                               0,
                               UploadedCvItem(
-                                filename: _lastSelectedFilename ?? 'candidate_cv.pdf',
+                                filename:
+                                    _lastSelectedFilename ?? 'candidate_cv.pdf',
                                 size: _lastSelectedSize ?? 'Unknown size',
                                 isSuccess: false,
                                 message: state.message,
@@ -345,7 +351,9 @@ class _UploadCvScreenState extends State<UploadCvScreen> {
                                       ? "Parsed successfully (${item.size})"
                                       : item.message,
                                   style: TextStyle(
-                                    color: item.isSuccess ? Colors.grey : Colors.red,
+                                    color: item.isSuccess
+                                        ? Colors.grey
+                                        : Colors.red,
                                     fontSize: 12,
                                   ),
                                 ),
@@ -384,13 +392,16 @@ class _UploadCvScreenState extends State<UploadCvScreen> {
                                   SnackBar(content: Text(item.message)),
                                 );
                               },
-                              icon: const Icon(Icons.info_outline, color: Colors.grey),
+                              icon: const Icon(
+                                Icons.info_outline,
+                                color: Colors.grey,
+                              ),
                             ),
                         ],
                       ),
                     ),
                   );
-                }).toList(),
+                }),
             ],
           ),
         ),
