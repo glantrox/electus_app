@@ -70,6 +70,13 @@ DEVICE_NAME=Flutter Client
 
 > **Catatan:** File `.env` sudah tercantum di `.gitignore` dan tidak akan ter-commit ke repository. Gunakan `.env.example` sebagai referensi.
 
+## Persyaratan Sistem
+
+Aplikasi ini disarankan untuk dijalankan pada platform **Windows**, **Android**, atau **iOS**. 
+
+> [!WARNING]
+> Jika Anda menjalankan aplikasi ini menggunakan **Chrome (Web)**, Anda akan mengalami masalah **CORS (Cross-Origin Resource Sharing) restriction** ketika aplikasi mencoba berinteraksi dengan API.
+
 ## Installation
 1. Salin template konfigurasi environment:
    ```bash
